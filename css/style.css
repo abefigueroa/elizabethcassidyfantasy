@@ -12,6 +12,21 @@ body {
     margin: 0;
 }
 
+nav {
+    position: absolute;
+    top: 30px;
+    width: 100%;
+}
+
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-size: 0.9rem;
+}
+
 h1 {
     font-size: 4rem;
 }
