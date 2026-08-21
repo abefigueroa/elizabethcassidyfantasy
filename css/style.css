@@ -124,8 +124,24 @@ p {
     color: #8f6b2f;
 }
 @media (max-width: 600px) {
+    .buy_button {
+        margin: 30px auto 0;
+    }
+    .site_logo{
+        display: none;
+    }
     .book_info {
         flex-direction: column;
         align-items: center;
+    }
+
+    .book_details {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .book_description {
+        font-size: 1rem;
+        line-height: 1.5;
     }
 }
