@@ -123,4 +123,9 @@ p {
 .email_address {
     color: #8f6b2f;
 }
-
+@media (max-width: 600px) {
+    .book_info {
+        flex-direction: column;
+        align-items: center;
+    }
+}
