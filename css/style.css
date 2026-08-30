@@ -123,6 +123,23 @@ p {
 .email_address {
     color: #8f6b2f;
 }
+.testimonial {
+    max-width: 450px;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    font-style: italic;
+    text-align: left;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    border-left: 3px solid #8f6b2f;
+    padding-left: 20px;
+    background-color: rgba(143, 107, 47, 0.08);
+    text-shadow: 1px 1px 2px rgba(143, 107, 47, 0.3);
+}
+.testimonial-mobile {
+    display: none;
+}
 @media (max-width: 600px) {
     .buy_button {
         margin: 30px auto 0;
@@ -143,5 +160,15 @@ p {
     .book_description {
         font-size: 1rem;
         line-height: 1.5;
+    }
+    .testimonial-desktop {
+    display: none;
+    }
+    .testimonial-mobile {
+    display: block;
+    width: 80%;
+    left: 40%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
     }
 }
