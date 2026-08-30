@@ -168,7 +168,9 @@ p {
     display: block;
     width: 80%;
     left: 40%;
-    transform: translateX(-50%);
+    transform: none;
     box-sizing: border-box;
+    position: static;
+    margin: 40px auto 20px;
     }
 }
