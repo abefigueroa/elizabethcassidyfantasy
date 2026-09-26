@@ -14,3 +14,44 @@
     margin: 0 auto;
     line-height: 1.6;
 }
+
+.registration_form {
+    width: 90%;
+    max-width: 400px;
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.registration_form label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.registration_form input {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.registration_form button {
+    margin-top: 25px;
+    padding: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.form_error {
+    color: darkred;
+    font-style: normal;
+}
+
+.draft_quest_button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #8f6b2f;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
