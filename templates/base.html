@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Elizabeth Cassidy Fantasy{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <nav>
+        <a href="{{ url_for('home') }}" class="site_logo">
+            <img src="{{ url_for('static', filename='images/Elizabeth_Cassidy.png') }}"
+                 alt="Elizabeth Cassidy logo">
+        </a>
+
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('books') }}">Books</a>
+        <a href="{{ url_for('connect') }}">Connect</a>
+        <a href="{{ url_for('draft_quest') }}">Draft Quest</a>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>

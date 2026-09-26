@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+Draft Quest | Elizabeth Cassidy Fantasy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/draft-quest.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<main class="draft_quest_home">
+    <h1>Draft Quest</h1>
+
+    <div class="title_divider"></div>
+
+    <p>
+        Set a writing goal, track your progress, and take on the quest
+        alongside other writers.
+    </p>
+</main>
+
+{% endblock %}

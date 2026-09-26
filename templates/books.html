@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+Books | Elizabeth Cassidy
+{% endblock %}
+
+{% block content %}
+
+<h1 class="page_title">Books</h1>
+
+<div class="title_divider"></div>
+
+<p>Explore the worlds of Elizabeth Cassidy.</p>
+
+<div class="book_info">
+    <img
+        class="book_cover"
+        src="{{ url_for('static', filename='images/ignivarbookcover.jpg') }}"
+        alt="Ignivar: The Fall of Pyraxia book cover"
+    >
+
+    <div class="book_details">
+        <h2 class="book_title">Ignivar: The Fall of Pyraxia</h2>
+
+        <p class="book_description">
+            Byron wants revenge.<br>
+            Corrinthea wants honor.<br>
+            Sylph wants freedom.<br>
+            Axxon wants to obey.<br>
+            Gaspar wants power no prayer has ever given him.<br><br>
+
+            When blood is spilled inside the empire’s most sacred temple,
+            a dangerous secret begins to break loose. Enemies are forced
+            together. Loyalties fracture. Passion turns to horror. And as
+            Pyraxia’s throne is left empty, thieves, priests, soldiers,
+            rulers, and monsters all begin circling what remains of a
+            dragon’s crown.<br><br>
+
+            The old empire was built to kneel.<br>
+            What rises from its ashes may be far worse.
+        </p>
+
+        <a
+            href="https://www.amazon.com/gp/product/B0HDRSN5VW/ref=ewc_pr_img_1?smid=A1Y53T3O3Q25L8&psc=1"
+            class="buy_button"
+        >
+            Buy Now
+        </a>
+    </div>
+</div>
+
+{% endblock %}
