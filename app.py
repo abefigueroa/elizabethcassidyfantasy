@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from models import User, WritingGoal, db
+from models import User, WordEntry, WritingGoal, db
 
 
 load_dotenv()
@@ -157,11 +157,53 @@ def dashboard():
 
                 return redirect(url_for("dashboard"))
 
+    entries = db.session.execute(
+        db.select(WordEntry)
+        .where(WordEntry.user_id == user.id)
+        .order_by(WordEntry.created_at.desc())
+    ).scalars().all()
+
+    total_words = sum(entry.words_written for entry in entries)
+
     return render_template(
         "draft-quest/dashboard.html",
         user=user,
         error=error,
+        entries=entries,
+        total_words=total_words,
     )
+
+# log words
+@app.route("/draft-quest/log-words", methods=["POST"])
+def log_words():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    user = db.session.get(User, session["user_id"])
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    words_input = request.form["words_written"].strip()
+
+    try:
+        words_written = int(words_input)
+    except ValueError:
+        return redirect(url_for("dashboard"))
+
+    if words_written <= 0:
+        return redirect(url_for("dashboard"))
+
+    entry = WordEntry(
+        user_id=user.id,
+        words_written=words_written,
+    )
+
+    db.session.add(entry)
+    db.session.commit()
+
+    return redirect(url_for("dashboard"))
 
 # Logout
 @app.route("/draft-quest/logout", methods=["POST"])

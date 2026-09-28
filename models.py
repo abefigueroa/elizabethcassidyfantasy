@@ -19,6 +19,12 @@ class User(db.Model):
         cascade="all, delete-orphan",
     )
 
+    word_entries = db.relationship(
+    "WordEntry",
+    back_populates="user",
+    cascade="all, delete-orphan",
+    )
+
     def __repr__(self):
         return f"<User {self.display_name}>"
 
@@ -51,3 +57,32 @@ class WritingGoal(db.Model):
 
     def __repr__(self):
         return f"<WritingGoal {self.target_words}>"
+
+
+class WordEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+    )
+
+    words_written = db.Column(
+        db.Integer,
+        nullable=False,
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="word_entries",
+    )
+
+    def __repr__(self):
+        return f"<WordEntry {self.words_written}>"

@@ -17,6 +17,10 @@ Dashboard | Draft Quest
 
     <div class="title_divider"></div>
 
+    {% if error %}
+        <p class="form_error">{{ error }}</p>
+    {% endif %}
+
     {% if user.writing_goal %}
 
         <section class="goal_section">
@@ -27,10 +31,58 @@ Dashboard | Draft Quest
                 {{ "{:,}".format(user.writing_goal.target_words) }} words
             </p>
 
+            <h2>Progress</h2>
+
+            <p class="goal_total">
+                {{ "{:,}".format(total_words) }}
+                /
+                {{ "{:,}".format(user.writing_goal.target_words) }}
+                words
+            </p>
+
+            <form
+                method="POST"
+                action="{{ url_for('log_words') }}"
+                class="goal_form"
+            >
+                <label for="words_written">
+                    Words written
+                </label>
+
+                <input
+                    type="number"
+                    id="words_written"
+                    name="words_written"
+                    min="1"
+                    placeholder="1000"
+                    required
+                >
+
+                <button type="submit">
+                    Log Words
+                </button>
+            </form>
+
+            {% if entries %}
+
+                <h2>Recent Entries</h2>
+
+                {% for entry in entries %}
+                    <p>
+                        {{ entry.created_at.strftime("%b %d, %Y") }}
+                        —
+                        {{ "{:,}".format(entry.words_written) }} words
+                    </p>
+                {% endfor %}
+
+            {% endif %}
+
+            <h2>Change Goal</h2>
+
             <form method="POST" class="goal_form">
 
                 <label for="target_words">
-                    Change your goal
+                    New target word count
                 </label>
 
                 <input
@@ -59,10 +111,6 @@ Dashboard | Draft Quest
             <p>
                 Choose how many words you want to write during your quest.
             </p>
-
-            {% if error %}
-                <p class="form_error">{{ error }}</p>
-            {% endif %}
 
             <form method="POST" class="goal_form">
 
