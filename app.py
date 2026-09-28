@@ -1,11 +1,17 @@
-from flask import Flask, render_template, redirect, request, url_for
-from werkzeug.security import generate_password_hash
+import os
 
-from models import User, db
+from dotenv import load_dotenv
+from flask import Flask, redirect, render_template, request, session, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
 
+from models import User, WritingGoal, db
+
+
+load_dotenv()
 
 app = Flask(__name__)
 
+app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///draft_quest.db"
 
 db.init_app(app)
@@ -28,9 +34,49 @@ def connect():
 
 @app.route("/draft-quest")
 def draft_quest():
-    return render_template("draft-quest/index.html")
+    user = None
 
+    if "user_id" in session:
+        user = db.session.get(User, session["user_id"])
 
+    return render_template(
+        "draft-quest/index.html",
+        user=user,
+    )
+
+# Login
+@app.route("/draft-quest/login", methods=["GET", "POST"])
+def login():
+    error = None
+
+    if request.method == "POST":
+        email = request.form["email"].strip().lower()
+        password = request.form["password"]
+
+        if not email or not password:
+            error = "Email and password are required."
+        else:
+            user = db.session.execute(
+                db.select(User).where(User.email == email)
+            ).scalar_one_or_none()
+
+            if user is None or not check_password_hash(
+                user.password_hash,
+                password,
+            ):
+                error = "Invalid email or password."
+            else:
+                session.clear()
+                session["user_id"] = user.id
+
+                return redirect(url_for("draft_quest"))
+
+    return render_template(
+        "draft-quest/login.html",
+        error=error,
+    )
+
+# Registration
 @app.route("/draft-quest/register", methods=["GET", "POST"])
 def register():
     error = None
@@ -70,6 +116,59 @@ def register():
         "draft-quest/register.html",
         error=error,
     )
+
+# Dashboard
+@app.route("/draft-quest/dashboard", methods=["GET", "POST"])
+def dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    user = db.session.get(User, session["user_id"])
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    error = None
+
+    if request.method == "POST":
+        target_words_input = request.form["target_words"].strip()
+
+        try:
+            target_words = int(target_words_input)
+        except ValueError:
+            error = "Your writing goal must be a whole number."
+        else:
+            if target_words <= 0:
+                error = "Your writing goal must be greater than zero."
+            else:
+                if user.writing_goal is None:
+                    goal = WritingGoal(
+                        user_id=user.id,
+                        target_words=target_words,
+                    )
+
+                    db.session.add(goal)
+
+                else:
+                    user.writing_goal.target_words = target_words
+
+                db.session.commit()
+
+                return redirect(url_for("dashboard"))
+
+    return render_template(
+        "draft-quest/dashboard.html",
+        user=user,
+        error=error,
+    )
+
+# Logout
+@app.route("/draft-quest/logout", methods=["POST"])
+def logout():
+    session.clear()
+
+    return redirect(url_for("draft_quest"))
 
 
 def main() -> None:

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Register | Draft Quest
+Login | Draft Quest
 {% endblock %}
 
 {% block extra_css %}
@@ -13,7 +13,7 @@ Register | Draft Quest
 
 <main class="draft_quest_home">
 
-    <h1>Join Draft Quest</h1>
+    <h1>Login to Draft Quest</h1>
 
     <div class="title_divider"></div>
 
@@ -31,14 +31,6 @@ Register | Draft Quest
             required
         >
 
-        <label for="display_name">Display Name</label>
-        <input
-            type="text"
-            id="display_name"
-            name="display_name"
-            required
-        >
-
         <label for="password">Password</label>
         <input
             type="password"
@@ -48,10 +40,15 @@ Register | Draft Quest
         >
 
         <button type="submit">
-            Create Account
+            Login
         </button>
 
     </form>
+
+    <p>
+        Don't have an account?
+        <a href="{{ url_for('register') }}">Register</a>
+    </p>
 
 </main>
 

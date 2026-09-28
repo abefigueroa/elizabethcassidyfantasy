@@ -21,10 +21,21 @@ Draft Quest | Elizabeth Cassidy Fantasy
         alongside other writers.
     </p>
 
-    <a href="{{ url_for('register') }}" class="draft_quest_button">
-    Create an Account
-    </a>
-    
+    {% if user %}
+
+        <p>Welcome back, {{ user.display_name }}.</p>
+
+    {% else %}
+
+        <a href="{{ url_for('register') }}" class="draft_quest_button">
+            Create an Account
+        </a>
+
+        <a href="{{ url_for('login') }}" class="draft_quest_button">
+            Login
+        </a>
+
+    {% endif %}
 </main>
 
 {% endblock %}

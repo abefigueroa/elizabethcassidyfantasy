@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | Draft Quest
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/draft-quest.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<main class="draft_quest_home">
+
+    <h1>{{ user.display_name }}'s Dashboard</h1>
+
+    <div class="title_divider"></div>
+
+    {% if user.writing_goal %}
+
+        <section class="goal_section">
+
+            <h2>Current Goal</h2>
+
+            <p class="goal_total">
+                {{ "{:,}".format(user.writing_goal.target_words) }} words
+            </p>
+
+            <form method="POST" class="goal_form">
+
+                <label for="target_words">
+                    Change your goal
+                </label>
+
+                <input
+                    type="number"
+                    id="target_words"
+                    name="target_words"
+                    min="1"
+                    value="{{ user.writing_goal.target_words }}"
+                    required
+                >
+
+                <button type="submit">
+                    Update Goal
+                </button>
+
+            </form>
+
+        </section>
+
+    {% else %}
+
+        <section class="goal_section">
+
+            <h2>Set Your Writing Goal</h2>
+
+            <p>
+                Choose how many words you want to write during your quest.
+            </p>
+
+            {% if error %}
+                <p class="form_error">{{ error }}</p>
+            {% endif %}
+
+            <form method="POST" class="goal_form">
+
+                <label for="target_words">
+                    Target word count
+                </label>
+
+                <input
+                    type="number"
+                    id="target_words"
+                    name="target_words"
+                    min="1"
+                    placeholder="50000"
+                    required
+                >
+
+                <button type="submit">
+                    Set Goal
+                </button>
+
+            </form>
+
+        </section>
+
+    {% endif %}
+
+</main>
+
+{% endblock %}

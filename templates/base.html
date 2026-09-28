@@ -17,13 +17,31 @@
     <nav>
         <a href="{{ url_for('home') }}" class="site_logo">
             <img src="{{ url_for('static', filename='images/Elizabeth_Cassidy.png') }}"
-                 alt="Elizabeth Cassidy logo">
+                alt="Elizabeth Cassidy logo">
         </a>
 
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('books') }}">Books</a>
-        <a href="{{ url_for('connect') }}">Connect</a>
-        <a href="{{ url_for('draft_quest') }}">Draft Quest</a>
+        {% if session.get("user_id") and request.path.startswith("/draft-quest") %}
+
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('draft_quest') }}">Draft Quest</a>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+
+            <form method="POST"
+                action="{{ url_for('logout') }}"
+                class="nav_logout_form">
+                <button type="submit" class="nav_logout_button">
+                    Log Out
+                </button>
+            </form>
+
+        {% else %}
+
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('books') }}">Books</a>
+            <a href="{{ url_for('connect') }}">Connect</a>
+            <a href="{{ url_for('draft_quest') }}">Draft Quest</a>
+
+        {% endif %}
     </nav>
 
     {% block content %}{% endblock %}

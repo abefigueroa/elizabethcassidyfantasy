@@ -15,7 +15,7 @@
     line-height: 1.6;
 }
 
-.registration_form {
+.auth_form {
     width: 90%;
     max-width: 400px;
     margin: 30px auto;
@@ -24,17 +24,17 @@
     text-align: left;
 }
 
-.registration_form label {
+.auth_form label {
     margin-top: 15px;
     margin-bottom: 5px;
 }
 
-.registration_form input {
+.auth_form input {
     padding: 10px;
     font-size: 1rem;
 }
 
-.registration_form button {
+.auth_form button {
     margin-top: 25px;
     padding: 12px;
     font-size: 1rem;
@@ -54,4 +54,39 @@
     color: white;
     text-decoration: none;
     border-radius: 4px;
+}
+
+.goal_section {
+    width: 90%;
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.goal_total {
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.goal_form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.goal_form label {
+    margin-bottom: 5px;
+}
+
+.goal_form input {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.goal_form button {
+    margin-top: 20px;
+    padding: 12px;
+    font-size: 1rem;
+    cursor: pointer;
 }
