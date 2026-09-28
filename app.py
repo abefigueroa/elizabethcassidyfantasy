@@ -5,6 +5,7 @@ from flask import Flask, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import User, WordEntry, WritingGoal, db
+from routes.dashboard import dashboard_bp
 
 
 load_dotenv()
@@ -15,6 +16,7 @@ app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///draft_quest.db"
 
 db.init_app(app)
+app.register_blueprint(dashboard_bp)
 
 
 @app.route("/")
@@ -117,61 +119,6 @@ def register():
         error=error,
     )
 
-# Dashboard
-@app.route("/draft-quest/dashboard", methods=["GET", "POST"])
-def dashboard():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    user = db.session.get(User, session["user_id"])
-
-    if user is None:
-        session.clear()
-        return redirect(url_for("login"))
-
-    error = None
-
-    if request.method == "POST":
-        target_words_input = request.form["target_words"].strip()
-
-        try:
-            target_words = int(target_words_input)
-        except ValueError:
-            error = "Your writing goal must be a whole number."
-        else:
-            if target_words <= 0:
-                error = "Your writing goal must be greater than zero."
-            else:
-                if user.writing_goal is None:
-                    goal = WritingGoal(
-                        user_id=user.id,
-                        target_words=target_words,
-                    )
-
-                    db.session.add(goal)
-
-                else:
-                    user.writing_goal.target_words = target_words
-
-                db.session.commit()
-
-                return redirect(url_for("dashboard"))
-
-    entries = db.session.execute(
-        db.select(WordEntry)
-        .where(WordEntry.user_id == user.id)
-        .order_by(WordEntry.created_at.desc())
-    ).scalars().all()
-
-    total_words = sum(entry.words_written for entry in entries)
-
-    return render_template(
-        "draft-quest/dashboard.html",
-        user=user,
-        error=error,
-        entries=entries,
-        total_words=total_words,
-    )
 
 # log words
 @app.route("/draft-quest/log-words", methods=["POST"])

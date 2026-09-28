@@ -40,9 +40,20 @@ Dashboard | Draft Quest
                 words
             </p>
 
+            <div class="progress_bar">
+                <div
+                    class="progress_fill"
+                    style="width: {{ progress_bar_percent }}%;"
+                ></div>
+            </div>
+
+            <p class="progress_percentage">
+                {{ "{:.1f}".format(progress_percent) }}% complete
+            </p>
+
             <form
                 method="POST"
-                action="{{ url_for('log_words') }}"
+                action="{{ url_for('dashboard.log_words') }}"
                 class="goal_form"
             >
                 <label for="words_written">
@@ -79,7 +90,11 @@ Dashboard | Draft Quest
 
             <h2>Change Goal</h2>
 
-            <form method="POST" class="goal_form">
+            <form
+                method="POST"
+                action="{{ url_for('dashboard.dashboard') }}"
+                class="goal_form"
+            >
 
                 <label for="target_words">
                     New target word count
