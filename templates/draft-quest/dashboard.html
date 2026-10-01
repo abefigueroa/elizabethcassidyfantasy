@@ -22,12 +22,6 @@ Dashboard | Draft Quest
 
         <p>Every word brings your story closer.</p>
 
-        <a
-            href="{{ url_for('dashboard.history') }}"
-            class="draft_quest_button"
-        >
-            View All History
-        </a>
     </header>
 
     {% for category, message in get_flashed_messages(with_categories=true) %}

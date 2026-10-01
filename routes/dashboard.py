@@ -228,3 +228,26 @@ def history():
         entries=entries,
         lifetime_words=sum(entry.words_written for entry in entries),
     )
+
+
+@dashboard_bp.route("/history/clear", methods=["POST"])
+def clear_history():
+    user = current_user()
+
+    if user is None:
+        return redirect(url_for("login"))
+
+    if request.form.get("confirm_clear") != "yes":
+        flash("Confirm deletion before clearing your history.", "error")
+        return redirect(url_for("dashboard.history"))
+
+    db.session.execute(
+        db.delete(WordEntry).where(WordEntry.user_id == user.id)
+    )
+
+    db.session.commit()
+    session.pop("celebrate_goal", None)
+
+    flash("Your writing history has been cleared.", "success")
+
+    return redirect(url_for("dashboard.history"))

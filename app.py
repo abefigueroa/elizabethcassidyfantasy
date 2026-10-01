@@ -36,15 +36,15 @@ def connect():
 
 @app.route("/draft-quest")
 def draft_quest():
-    user = None
+    user_id = session.get("user_id")
+    user = db.session.get(User, user_id) if user_id is not None else None
 
-    if "user_id" in session:
-        user = db.session.get(User, session["user_id"])
+    if user is not None:
+        return redirect(url_for("dashboard.dashboard"))
 
-    return render_template(
-        "draft-quest/index.html",
-        user=user,
-    )
+    session.pop("user_id", None)
+
+    return render_template("draft-quest/index.html")
 
 # Login
 @app.route("/draft-quest/login", methods=["GET", "POST"])
@@ -71,7 +71,7 @@ def login():
                 session.clear()
                 session["user_id"] = user.id
 
-                return redirect(url_for("draft_quest"))
+                return redirect(url_for("dashboard.dashboard"))
 
     return render_template(
         "draft-quest/login.html",
@@ -151,6 +151,18 @@ def log_words():
     db.session.commit()
 
     return redirect(url_for("dashboard"))
+
+# Profile
+@app.route("/draft-quest/profile")
+def profile():
+    user_id = session.get("user_id")
+    user = db.session.get(User, user_id) if user_id is not None else None
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    return render_template("draft-quest/profile.html", user=user)
 
 # Logout
 @app.route("/draft-quest/logout", methods=["POST"])

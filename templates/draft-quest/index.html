@@ -1,41 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}
-Draft Quest | Elizabeth Cassidy Fantasy
-{% endblock %}
+{% block title %}Draft Quest | Elizabeth Cassidy Fantasy{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/draft-quest.css') }}">
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/draft-quest.css') }}"
+>
 {% endblock %}
 
 {% block content %}
-
 <main class="draft_quest_home">
     <h1>Draft Quest</h1>
-
     <div class="title_divider"></div>
 
     <p>
-        Set a writing goal, track your progress, and take on the quest
-        alongside other writers.
+        Give your stories a goal. Track your words, celebrate your
+        progress, and build your writing history.
     </p>
 
-    {% if user %}
-
-        <p>Welcome back, {{ user.display_name }}.</p>
-
-    {% else %}
-
-        <a href="{{ url_for('register') }}" class="draft_quest_button">
-            Create an Account
+    <div class="draft_quest_actions">
+        <a
+            href="{{ url_for('register') }}"
+            class="draft_quest_button"
+        >
+            Create Account
         </a>
 
-        <a href="{{ url_for('login') }}" class="draft_quest_button">
-            Login
+        <a
+            href="{{ url_for('login') }}"
+            class="draft_quest_button"
+        >
+            Log In
         </a>
-
-    {% endif %}
+    </div>
 </main>
-
 {% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | Draft Quest{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/draft-quest.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<main class="quest_dashboard">
+    <header class="dashboard_header">
+        <p class="dashboard_eyebrow">Draft Quest</p>
+        <h1>My Profile</h1>
+    </header>
+
+    <section class="dashboard_panel dashboard_setup">
+        <h2>Account Details</h2>
+
+        <dl class="profile_details">
+            <dt>Display name</dt>
+            <dd>{{ user.display_name }}</dd>
+
+            <dt>Email</dt>
+            <dd>{{ user.email }}</dd>
+        </dl>
+    </section>
+</main>
+{% endblock %}

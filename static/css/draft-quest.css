@@ -317,6 +317,65 @@
     white-space: nowrap;
 }
 
+.history_clear_panel {
+    margin-top: 24px;
+}
+
+.history_confirmation {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.dashboard_form .history_confirmation input {
+    width: auto;
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.dashboard_form .danger_button {
+    background-color: #963d32;
+}
+
+.dashboard_form .danger_button:hover {
+    background-color: #752d25;
+}
+
+.draft_quest_home {
+    width: 90%;
+    max-width: 800px;
+    margin: 120px auto 40px;
+    text-align: center;
+}
+
+.draft_quest_home h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.draft_quest_home p {
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.draft_quest_actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.draft_quest_button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #8f6b2f;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
 .confetti_layer {
     position: fixed;
     inset: 0;
@@ -334,6 +393,21 @@
     animation-name: confetti_fall;
     animation-timing-function: linear;
     animation-fill-mode: both;
+}
+
+.profile_details {
+    margin: 0;
+}
+
+.profile_details dt {
+    margin-top: 20px;
+    color: var(--quest_muted);
+    font-weight: bold;
+}
+
+.profile_details dd {
+    margin: 6px 0 0;
+    overflow-wrap: anywhere;
 }
 
 @keyframes confetti_fall {

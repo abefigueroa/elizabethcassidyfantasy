@@ -6,42 +6,75 @@
 
     <title>{% block title %}Elizabeth Cassidy Fantasy{% endblock %}</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
 
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-    <nav>
+    <nav aria-label="Main navigation">
+
         <a href="{{ url_for('home') }}" class="site_logo">
-            <img src="{{ url_for('static', filename='images/Elizabeth_Cassidy.png') }}"
-                alt="Elizabeth Cassidy logo">
+            <img
+                src="{{ url_for('static', filename='images/Elizabeth_Cassidy.png') }}"
+                alt="Elizabeth Cassidy home"
+            >
         </a>
 
-        {% if session.get("user_id") and request.path.startswith("/draft-quest") %}
-
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('draft_quest') }}">Draft Quest</a>
-            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
-
-            <form method="POST"
-                action="{{ url_for('logout') }}"
-                class="nav_logout_form">
-                <button type="submit" class="nav_logout_button">
-                    Log Out
-                </button>
-            </form>
-
-        {% else %}
-
+        <div class="site_nav_links">
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('books') }}">Books</a>
             <a href="{{ url_for('connect') }}">Connect</a>
-            <a href="{{ url_for('draft_quest') }}">Draft Quest</a>
 
-        {% endif %}
+            {% if session.get("user_id") %}
+                <a href="{{ url_for('dashboard.dashboard') }}">
+                    Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('draft_quest') }}">
+                    Draft Quest
+                </a>
+            {% endif %}
+        </div>
+
+        <details class="account_menu">
+            <summary aria-label="Account menu">
+                <svg
+                    viewBox="0 0 24 24"
+                    width="28"
+                    height="28"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path>
+                </svg>
+            </summary>
+
+            <div class="account_dropdown">
+                {% if session.get("user_id") %}
+                    <a href="{{ url_for('profile') }}">My Profile</a>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('logout') }}"
+                    >
+                        <button type="submit">Log Out</button>
+                    </form>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Log In</a>
+                    <a href="{{ url_for('register') }}">Create Account</a>
+                {% endif %}
+            </div>
+        </details>
+
     </nav>
 
     {% block content %}{% endblock %}

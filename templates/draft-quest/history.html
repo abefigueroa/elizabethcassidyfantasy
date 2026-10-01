@@ -20,13 +20,16 @@
             across {{ entries | length }} entries.
         </p>
 
-        <a
-            href="{{ url_for('dashboard.dashboard') }}"
-            class="draft_quest_button"
-        >
-            Back to Dashboard
-        </a>
     </header>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <p
+            class="dashboard_notice{% if category == 'error' %} form_error{% endif %}"
+            role="status"
+        >
+            {{ message }}
+        </p>
+    {% endfor %}
 
     <section class="dashboard_panel">
         <h2>All Entries</h2>
@@ -80,6 +83,34 @@
             </p>
         {% endif %}
     </section>
+
+    {% if entries %}
+    <section class="dashboard_panel history_clear_panel">
+        <h2>Clear Writing History</h2>
+
+        <p class="dashboard_muted">
+            Permanently delete all your word-count entries across every
+            quest. Your current word count will return to zero.
+            Your project names and goals will remain.
+        </p>
+
+        <form
+            method="POST"
+            action="{{ url_for('dashboard.clear_history') }}"
+            class="dashboard_form"
+        >
+            <label class="history_confirmation">
+                <input type="checkbox" name="confirm_clear" value="yes" required>
+                I understand that these entries cannot be restored
+                through the website.
+            </label>
+
+            <button type="submit" class="danger_button">
+                Permanently Clear History
+            </button>
+        </form>
+    </section>
+{% endif %}
 
 </main>
 {% endblock %}
