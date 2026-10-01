@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Writing History | Draft Quest{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/draft-quest.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<main class="quest_dashboard">
+
+    <header class="dashboard_header">
+        <p class="dashboard_eyebrow">Draft Quest</p>
+        <h1>Your Writing History</h1>
+        <p>
+            {{ "{:,}".format(lifetime_words) }} words
+            across {{ entries | length }} entries.
+        </p>
+
+        <a
+            href="{{ url_for('dashboard.dashboard') }}"
+            class="draft_quest_button"
+        >
+            Back to Dashboard
+        </a>
+    </header>
+
+    <section class="dashboard_panel">
+        <h2>All Entries</h2>
+
+        {% if entries %}
+            <div class="history_table_wrapper">
+                <table class="history_table">
+                    <caption class="history_caption">
+                        Entries from all your writing quests, newest first.
+                    </caption>
+
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Work in Progress</th>
+                            <th scope="col">Quest</th>
+                            <th scope="col">Words</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for entry in entries %}
+                            <tr>
+                                <td>
+                                    {{ entry.created_at.strftime("%b %d, %Y") }}
+                                </td>
+                                <td>
+                                    {{ entry.goal.project_name
+                                       if entry.goal else "Earlier writing" }}
+                                </td>
+                                <td>
+                                    {% if entry.goal %}
+                                        #{{ entry.goal.id }} ·
+                                        {{ "Active" if entry.goal.is_active
+                                           else "Archived" }}
+                                    {% else %}
+                                        Unassigned
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ "{:,}".format(entry.words_written) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="dashboard_empty">
+                Your writing history will appear after your first entry.
+            </p>
+        {% endif %}
+    </section>
+
+</main>
+{% endblock %}

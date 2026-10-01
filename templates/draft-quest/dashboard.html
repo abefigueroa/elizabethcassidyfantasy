@@ -5,153 +5,348 @@ Dashboard | Draft Quest
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/draft-quest.css') }}">
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/draft-quest.css') }}"
+>
 {% endblock %}
 
 {% block content %}
 
-<main class="draft_quest_home">
+<main class="quest_dashboard">
 
-    <h1>{{ user.display_name }}'s Dashboard</h1>
+    <header class="dashboard_header">
+        <p class="dashboard_eyebrow">Draft Quest</p>
 
-    <div class="title_divider"></div>
+        <h1>{{ user.display_name }}'s Dashboard</h1>
+
+        <p>Every word brings your story closer.</p>
+
+        <a
+            href="{{ url_for('dashboard.history') }}"
+            class="draft_quest_button"
+        >
+            View All History
+        </a>
+    </header>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <p
+            class="dashboard_notice{% if category == 'error' %} form_error{% endif %}"
+            role="status"
+        >
+            {{ message }}
+        </p>
+    {% endfor %}
 
     {% if error %}
-        <p class="form_error">{{ error }}</p>
+        <p class="form_error dashboard_error" role="alert">
+            {{ error }}
+        </p>
     {% endif %}
 
-    {% if user.writing_goal %}
+    {% if celebrate_goal %}
+        <p id="goal_celebration" role="status">
+            Congratulations! You reached your writing goal!
+        </p>
+    {% endif %}
 
-        <section class="goal_section">
+    {% set goal = user.writing_goal %}
 
-            <h2>Current Goal</h2>
+    {% if goal %}
 
-            <p class="goal_total">
-                {{ "{:,}".format(user.writing_goal.target_words) }} words
-            </p>
+        {% set target_words = goal.target_words %}
+        {% set words_remaining = [target_words - total_words, 0] | max %}
 
-            <h2>Progress</h2>
+        <section class="dashboard_stats" aria-label="Writing summary">
 
-            <p class="goal_total">
-                {{ "{:,}".format(total_words) }}
-                /
-                {{ "{:,}".format(user.writing_goal.target_words) }}
-                words
-            </p>
+            <div class="stat_card">
+                <h2>Words Written</h2>
 
-            <div class="progress_bar">
-                <div
-                    class="progress_fill"
-                    style="width: {{ progress_bar_percent }}%;"
-                ></div>
+                <p class="stat_value">
+                    {{ "{:,}".format(total_words) }}
+                </p>
+
+                <p class="stat_detail">During your current quest</p>
             </div>
 
-            <p class="progress_percentage">
-                {{ "{:.1f}".format(progress_percent) }}% complete
-            </p>
+            <div class="stat_card">
+                <h2>Writing Goal</h2>
 
-            <form
-                method="POST"
-                action="{{ url_for('dashboard.log_words') }}"
-                class="goal_form"
-            >
-                <label for="words_written">
-                    Words written
-                </label>
+                <p class="stat_value">
+                    {{ "{:,}".format(target_words) }}
+                </p>
 
-                <input
-                    type="number"
-                    id="words_written"
-                    name="words_written"
-                    min="1"
-                    placeholder="1000"
-                    required
+                <p class="stat_detail">Words in your quest</p>
+            </div>
+
+            <div class="stat_card">
+                <h2>Words Remaining</h2>
+
+                <p class="stat_value">
+                    {{ "{:,}".format(words_remaining) }}
+                </p>
+
+                <p class="stat_detail">
+                    {% if words_remaining == 0 %}
+                        Goal reached!
+                    {% else %}
+                        Keep your story moving
+                    {% endif %}
+                </p>
+            </div>
+
+        </section>
+
+        <div class="dashboard_grid">
+
+            <section class="dashboard_panel">
+                <h2>Your Quest Progress</h2>
+
+                <p class="dashboard_project">
+                    {{ goal.project_name }}
+                </p>
+
+                <p class="dashboard_progress_value">
+                    {{ "{:.1f}".format(progress_percent) }}%
+                </p>
+
+                <p class="dashboard_muted">
+                    {{ "{:,}".format(total_words) }}
+                    of {{ "{:,}".format(target_words) }} words
+                </p>
+
+                <div
+                    class="progress_bar"
+                    role="progressbar"
+                    aria-label="Writing goal progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="{{ progress_bar_percent }}"
                 >
+                    <div
+                        class="progress_fill"
+                        style="width: {{ progress_bar_percent }}%;"
+                    ></div>
+                </div>
 
-                <button type="submit">
-                    Log Words
-                </button>
-            </form>
+                <p class="dashboard_muted">
+                    {% if words_remaining == 0 %}
+                        You've completed your writing goal.
+                        Celebrate your work!
+                    {% else %}
+                        {{ "{:,}".format(words_remaining) }}
+                        more words to reach your goal.
+                    {% endif %}
+                </p>
+            </section>
 
-            {% if entries %}
+            <section class="dashboard_panel">
+                <h2>Log Your Writing</h2>
 
-                <h2>Recent Entries</h2>
+                <p class="dashboard_muted">
+                    Add the words you wrote during your latest session.
+                </p>
 
-                {% for entry in entries %}
-                    <p>
-                        {{ entry.created_at.strftime("%b %d, %Y") }}
-                        —
-                        {{ "{:,}".format(entry.words_written) }} words
+                <form
+                    method="POST"
+                    action="{{ url_for('dashboard.log_words') }}"
+                    class="dashboard_form"
+                >
+                    <label for="words_written">Words written</label>
+
+                    <input
+                        type="number"
+                        id="words_written"
+                        name="words_written"
+                        min="1"
+                        step="1"
+                        placeholder="1000"
+                        required
+                    >
+
+                    <button type="submit">Log Words</button>
+                </form>
+            </section>
+
+            <section class="dashboard_panel">
+                <div class="dashboard_panel_heading">
+                    <h2>Recent Entries</h2>
+
+                    <span class="dashboard_badge">
+                        {{ entries | length }} this quest
+                    </span>
+                </div>
+
+                {% if entries %}
+                    <ul class="dashboard_entries">
+                        {% for entry in entries[:5] %}
+                            <li>
+                                <span>
+                                    {{ entry.created_at.strftime("%b %d, %Y") }}
+                                </span>
+
+                                <strong>
+                                    +{{ "{:,}".format(entry.words_written) }}
+                                    words
+                                </strong>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="dashboard_empty">
+                        Your quest starts with your first entry.
+                        Log a writing session to see it here.
                     </p>
-                {% endfor %}
+                {% endif %}
 
-            {% endif %}
+                <a
+                    href="{{ url_for('dashboard.history') }}"
+                    class="draft_quest_button"
+                >
+                    View All History
+                </a>
+            </section>
 
-            <h2>Change Goal</h2>
+            <section class="dashboard_panel">
+                <h2>Adjust Your Goal</h2>
+
+                <p class="dashboard_muted">
+                    Update your project name or target.
+                    Your current word count stays the same.
+                </p>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('dashboard.dashboard') }}"
+                    class="dashboard_form"
+                >
+                    <label for="project_name">Work in progress</label>
+
+                    <input
+                        type="text"
+                        id="project_name"
+                        name="project_name"
+                        maxlength="200"
+                        value="{{ goal.project_name }}"
+                        placeholder="Your book or project title"
+                        required
+                    >
+
+                    <label for="target_words">Target word count</label>
+
+                    <input
+                        type="number"
+                        id="target_words"
+                        name="target_words"
+                        min="1"
+                        step="1"
+                        value="{{ goal.target_words }}"
+                        required
+                    >
+
+                    <button type="submit">Update Goal</button>
+                </form>
+            </section>
+
+            <section class="dashboard_panel dashboard_new_quest">
+                <h2>Start a New Quest</h2>
+
+                <p class="dashboard_muted">
+                    Archive your current quest and start at zero words.
+                    All previous entries will remain in your history.
+                </p>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('dashboard.new_goal') }}"
+                    class="dashboard_form"
+                >
+                    <label for="new_project_name">Work in progress</label>
+
+                    <input
+                        type="text"
+                        id="new_project_name"
+                        name="project_name"
+                        maxlength="200"
+                        placeholder="Your next book or project title"
+                        required
+                    >
+
+                    <label for="new_target_words">
+                        New target word count
+                    </label>
+
+                    <input
+                        type="number"
+                        id="new_target_words"
+                        name="target_words"
+                        min="1"
+                        step="1"
+                        placeholder="50000"
+                        required
+                    >
+
+                    <button type="submit">
+                        Archive Current Quest &amp; Start New
+                    </button>
+                </form>
+            </section>
+
+        </div>
+
+    {% else %}
+
+        <section class="dashboard_panel dashboard_setup">
+            <h2>Begin Your Writing Quest</h2>
+
+            <p class="dashboard_muted">
+                Give your project a name and choose a word count goal.
+            </p>
 
             <form
                 method="POST"
                 action="{{ url_for('dashboard.dashboard') }}"
-                class="goal_form"
+                class="dashboard_form"
             >
-
-                <label for="target_words">
-                    New target word count
-                </label>
+                <label for="project_name">Work in progress</label>
 
                 <input
-                    type="number"
-                    id="target_words"
-                    name="target_words"
-                    min="1"
-                    value="{{ user.writing_goal.target_words }}"
+                    type="text"
+                    id="project_name"
+                    name="project_name"
+                    maxlength="200"
+                    placeholder="Your book or project title"
                     required
                 >
 
-                <button type="submit">
-                    Update Goal
-                </button>
-
-            </form>
-
-        </section>
-
-    {% else %}
-
-        <section class="goal_section">
-
-            <h2>Set Your Writing Goal</h2>
-
-            <p>
-                Choose how many words you want to write during your quest.
-            </p>
-
-            <form method="POST" class="goal_form">
-
-                <label for="target_words">
-                    Target word count
-                </label>
+                <label for="target_words">Target word count</label>
 
                 <input
                     type="number"
                     id="target_words"
                     name="target_words"
                     min="1"
+                    step="1"
                     placeholder="50000"
                     required
                 >
 
-                <button type="submit">
-                    Set Goal
-                </button>
-
+                <button type="submit">Set Goal</button>
             </form>
-
         </section>
 
     {% endif %}
 
 </main>
 
+{% endblock %}
+
+{% block extra_js %}
+    {% if celebrate_goal %}
+        <script
+            src="{{ url_for('static', filename='js/draft-quest.js') }}"
+            defer
+        ></script>
+    {% endif %}
 {% endblock %}
