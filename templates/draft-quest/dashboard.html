@@ -374,7 +374,14 @@ Dashboard | Draft Quest
                         >
 
                         <label for="entry_date">Date</label>
-                        <input type="text" id="entry_date" value="Recorded automatically" readonly>
+                        <input
+                            type="date"
+                            id="entry_date"
+                            name="entry_date"
+                            value="{{ today }}"
+                            max="{{ today }}"
+                            required
+                        >
 
                         <button type="submit" class="add_entry_button">
                             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false">

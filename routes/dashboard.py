@@ -142,6 +142,7 @@ def dashboard():
         error=error,
         entries=entries,
         total_words=total_words,
+        today=today.isoformat(),
         weekly_totals=weekly_totals,
         writing_streak=writing_streak,
         progress_percent=progress_percent,
@@ -174,6 +175,18 @@ def log_words():
         flash("Words written must be a whole number greater than zero.", "error")
         return redirect(url_for("dashboard.dashboard"))
 
+    date_input = request.form.get("entry_date", "").strip()
+
+    try:
+        entry_date = datetime.strptime(date_input, "%Y-%m-%d").date()
+    except ValueError:
+        flash("Choose a valid writing date.", "error")
+        return redirect(url_for("dashboard.dashboard"))
+
+    if entry_date > datetime.now(timezone.utc).date():
+        flash("Writing dates cannot be in the future.", "error")
+        return redirect(url_for("dashboard.dashboard"))
+
     previous_total = db.session.execute(
         db.select(
             db.func.coalesce(db.func.sum(WordEntry.words_written), 0)
@@ -187,6 +200,11 @@ def log_words():
         user_id=user.id,
         goal_id=goal.id,
         words_written=words_written,
+        created_at=datetime.combine(
+            entry_date,
+            datetime.min.time(),
+            tzinfo=timezone.utc,
+        ),
     )
 
     db.session.add(entry)
