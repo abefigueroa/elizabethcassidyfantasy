@@ -13,6 +13,25 @@ Dashboard | Draft Quest
 
 {% block content %}
 
+{% macro panel_icon(kind) %}
+<span class="panel_icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+        {% if kind == 'book' %}
+            <path d="M12 5C8 3 5 3 2 4v15c3-1 6-1 10 1 4-2 7-2 10-1V4c-3-1-6-1-10 1zM12 5v15"></path>
+        {% elif kind == 'pencil' %}
+            <path d="m4 16-1 5 5-1L20 8l-4-4zM14 6l4 4M16 4l2-2 4 4-2 2"></path>
+        {% elif kind == 'chart' %}
+            <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+            <path d="M8 8h8M8 12h8M8 16h5"></path>
+        {% else %}
+            <rect x="3" y="4" width="18" height="16" rx="1"></rect>
+            <path d="M7 8h10M7 12h10M7 16h6"></path>
+        {% endif %}
+    </svg>
+</span>
+{% endmacro %}
+
+
 <main class="quest_dashboard">
 
     <header class="dashboard_header">
@@ -55,239 +74,376 @@ Dashboard | Draft Quest
         <section class="dashboard_stats" aria-label="Writing summary">
 
             <div class="stat_card">
-                <h2>Words Written</h2>
+                <span class="stat_icon" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="32"
+                        height="32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        focusable="false"
+                    >
+                        <path d="M14 2.5H4.5v19h15V8z"></path>
+                        <path d="M14 2.5V8h5.5"></path>
+                        <path d="M8 11.5h8M8 15h8M8 18.5h5"></path>
+                    </svg>
+                </span>
 
-                <p class="stat_value">
-                    {{ "{:,}".format(total_words) }}
-                </p>
+                <div class="stat_content">
+                    <h2>Total Words</h2>
 
-                <p class="stat_detail">During your current quest</p>
+                    <p class="stat_value">
+                        {{ "{:,}".format(total_words) }}
+                    </p>
+
+                    <p class="stat_detail">During your current quest</p>
+                </div>
             </div>
 
             <div class="stat_card">
-                <h2>Writing Goal</h2>
+                <span class="stat_icon" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="32"
+                        height="32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        focusable="false"
+                    >
+                        <circle cx="10.5" cy="13.5" r="8.5"></circle>
+                        <circle cx="10.5" cy="13.5" r="5"></circle>
+                        <circle cx="10.5" cy="13.5" r="1.5" fill="currentColor" stroke="none"></circle>
+                        <path d="M10.5 13.5 21 3"></path>
+                        <path d="M18 2v4h4"></path>
+                    </svg>
+                </span>
 
-                <p class="stat_value">
-                    {{ "{:,}".format(target_words) }}
-                </p>
-
-                <p class="stat_detail">Words in your quest</p>
+                <div class="stat_content">
+                    <h2>Goal</h2>
+                    <p class="stat_value">
+                        {{ "{:,}".format(target_words) }}
+                    </p>
+                    <p class="stat_detail">Words in your quest</p>
+                </div>
             </div>
 
             <div class="stat_card">
-                <h2>Words Remaining</h2>
+                <span class="stat_icon" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="32"
+                        height="32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        focusable="false"
+                    >
+                        <path d="M10.5 3a9 9 0 1 0 10.5 10.5H10.5z"></path>
+                        <path d="M13.5 1.5v9h9a9 9 0 0 0-9-9z"
+                            fill="currentColor" stroke="none"></path>
+                    </svg>
+                </span>
 
-                <p class="stat_value">
-                    {{ "{:,}".format(words_remaining) }}
-                </p>
+                <div class="stat_content">
+                    <h2>Remaining</h2>
 
-                <p class="stat_detail">
-                    {% if words_remaining == 0 %}
-                        Goal reached!
-                    {% else %}
-                        Keep your story moving
-                    {% endif %}
-                </p>
+                    <p class="stat_value">
+                        {{ "{:,}".format(words_remaining) }}
+                    </p>
+
+                    <p class="stat_detail">
+                        {% if words_remaining == 0 %}
+                            Goal reached!
+                        {% else %}
+                            Keep your story moving
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="stat_card">
+                <span class="stat_icon" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="32"
+                        height="32"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        focusable="false"
+                    >
+                        <path d="
+                            M10 1
+                            C15 3 16 7 14 11
+                            C16 10 17 7 16.5 5
+                            C20 8 22 12 21 16
+                            C20.3 20 17 22.5 13 23
+                            C15 21 15.8 19 14.5 17
+                            C13.5 15.5 12 14 12.5 12
+                            C10 14 9 16 9.8 18.5
+                            C10.5 20.5 11.5 21.5 11 23
+                            C6 22.5 3 19.5 3 15.5
+                            C3 12 5 10 7.5 7.5
+                            C9.5 5.5 11 3.5 10 1 Z
+                        "></path>
+                    </svg>
+                </span>
+
+                <div class="stat_content">
+                    <h2>Writing Streak</h2>
+
+                    <p class="stat_value">
+                        {{ writing_streak }}
+                        {{ "day" if writing_streak == 1 else "days" }}
+                    </p>
+
+                    <p class="stat_detail">Consecutive writing days · UTC</p>
+                </div>
             </div>
 
         </section>
 
         <div class="dashboard_grid">
+            <div class="dashboard_column">
+                <section class="dashboard_panel">
+                    <h2>Your writing goal</h2>
+                <details class="goal_editor">
+                    <summary>{{ panel_icon("pencil") }} Edit goal</summary>
 
-            <section class="dashboard_panel">
-                <h2>Your Quest Progress</h2>
-
-                <p class="dashboard_project">
-                    {{ goal.project_name }}
-                </p>
-
-                <p class="dashboard_progress_value">
-                    {{ "{:.1f}".format(progress_percent) }}%
-                </p>
-
-                <p class="dashboard_muted">
-                    {{ "{:,}".format(total_words) }}
-                    of {{ "{:,}".format(target_words) }} words
-                </p>
-
-                <div
-                    class="progress_bar"
-                    role="progressbar"
-                    aria-label="Writing goal progress"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow="{{ progress_bar_percent }}"
-                >
-                    <div
-                        class="progress_fill"
-                        style="width: {{ progress_bar_percent }}%;"
-                    ></div>
-                </div>
-
-                <p class="dashboard_muted">
-                    {% if words_remaining == 0 %}
-                        You've completed your writing goal.
-                        Celebrate your work!
-                    {% else %}
-                        {{ "{:,}".format(words_remaining) }}
-                        more words to reach your goal.
-                    {% endif %}
-                </p>
-            </section>
-
-            <section class="dashboard_panel">
-                <h2>Log Your Writing</h2>
-
-                <p class="dashboard_muted">
-                    Add the words you wrote during your latest session.
-                </p>
-
-                <form
-                    method="POST"
-                    action="{{ url_for('dashboard.log_words') }}"
-                    class="dashboard_form"
-                >
-                    <label for="words_written">Words written</label>
-
-                    <input
-                        type="number"
-                        id="words_written"
-                        name="words_written"
-                        min="1"
-                        step="1"
-                        placeholder="1000"
-                        required
-                    >
-
-                    <button type="submit">Log Words</button>
-                </form>
-            </section>
-
-            <section class="dashboard_panel">
-                <div class="dashboard_panel_heading">
-                    <h2>Recent Entries</h2>
-
-                    <span class="dashboard_badge">
-                        {{ entries | length }} this quest
-                    </span>
-                </div>
-
-                {% if entries %}
-                    <ul class="dashboard_entries">
-                        {% for entry in entries[:5] %}
-                            <li>
-                                <span>
-                                    {{ entry.created_at.strftime("%b %d, %Y") }}
-                                </span>
-
-                                <strong>
-                                    +{{ "{:,}".format(entry.words_written) }}
-                                    words
-                                </strong>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="dashboard_empty">
-                        Your quest starts with your first entry.
-                        Log a writing session to see it here.
+                    <p class="dashboard_muted">
+                        Update your project name or target.
+                        Your current word count stays the same.
                     </p>
-                {% endif %}
 
-                <a
-                    href="{{ url_for('dashboard.history') }}"
-                    class="draft_quest_button"
-                >
-                    View All History
-                </a>
-            </section>
-
-            <section class="dashboard_panel">
-                <h2>Adjust Your Goal</h2>
-
-                <p class="dashboard_muted">
-                    Update your project name or target.
-                    Your current word count stays the same.
-                </p>
-
-                <form
-                    method="POST"
-                    action="{{ url_for('dashboard.dashboard') }}"
-                    class="dashboard_form"
-                >
-                    <label for="project_name">Work in progress</label>
-
-                    <input
-                        type="text"
-                        id="project_name"
-                        name="project_name"
-                        maxlength="200"
-                        value="{{ goal.project_name }}"
-                        placeholder="Your book or project title"
-                        required
+                    <form
+                        method="POST"
+                        action="{{ url_for('dashboard.dashboard') }}"
+                        class="dashboard_form"
                     >
+                        <label for="project_name">Work in progress</label>
 
-                    <label for="target_words">Target word count</label>
+                        <input
+                            type="text"
+                            id="project_name"
+                            name="project_name"
+                            maxlength="200"
+                            value="{{ goal.project_name }}"
+                            placeholder="Your book or project title"
+                            required
+                        >
 
-                    <input
-                        type="number"
-                        id="target_words"
-                        name="target_words"
-                        min="1"
-                        step="1"
-                        value="{{ goal.target_words }}"
-                        required
+                        <label for="target_words">Target word count</label>
+
+                        <input
+                            type="number"
+                            id="target_words"
+                            name="target_words"
+                            min="1"
+                            step="1"
+                            value="{{ goal.target_words }}"
+                            required
+                        >
+
+                        <button type="submit">Update Goal</button>
+                    </form>
+                </details>
+
+                    <p class="dashboard_project">{{ goal.project_name }}</p>
+
+                    <p class="dashboard_progress_value">
+                        <strong>{{ "{:,}".format(total_words) }}</strong>
+                        / {{ "{:,}".format(target_words) }} words
+                    </p>
+
+                    <div
+                        class="progress_bar"
+                        role="progressbar"
+                        aria-label="Writing goal progress"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="{{ progress_bar_percent }}"
                     >
+                        <div
+                            class="progress_fill"
+                            style="width: {{ progress_bar_percent }}%;"
+                        ></div>
+                    </div>
 
-                    <button type="submit">Update Goal</button>
-                </form>
-            </section>
+                    <p class="dashboard_progress_percent">
+                        {{ "{:.1f}".format(progress_percent) }}% complete
+                    </p>
 
-            <section class="dashboard_panel dashboard_new_quest">
-                <h2>Start a New Quest</h2>
+                </section>
 
-                <p class="dashboard_muted">
-                    Archive your current quest and start at zero words.
-                    All previous entries will remain in your history.
-                </p>
+                <section class="dashboard_panel">
+                    <h2 class="section_heading">{{ panel_icon("chart") }} Words this week</h2>
+                    {% set weekly_max = [weekly_totals.values() | max, 1] | max %}
+                    {% set chart_step = ((weekly_max / 400) | round(0, 'ceil') | int) * 100 %}
+                    {% set chart_max = chart_step * 4 %}
+                    <div class="weekly_graph" role="group" aria-label="Words written this week for the current project, Monday through Sunday, UTC">
+                        <div class="weekly_axis" aria-hidden="true">
+                            {% for tick in range(4, -1, -1) %}
+                                <span>{{ "{:,}".format(chart_step * tick) }}</span>
+                            {% endfor %}
+                        </div>
+                        <ul class="weekly_chart">
+                            {% for day, words in weekly_totals.items() %}
+                                <li class="weekly_chart_day" aria-label="{{ day.strftime('%A, %b %d') }}: {{ words }} words">
+                                    <div class="weekly_chart_track" aria-hidden="true">
+                                        <div class="weekly_chart_bar" style="height: {{ words / chart_max * 100 }}%;" title="{{ words }} words"></div>
+                                    </div>
+                                    <span aria-hidden="true">{{ day.strftime("%a") }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </section>
 
-                <form
-                    method="POST"
-                    action="{{ url_for('dashboard.new_goal') }}"
-                    class="dashboard_form"
-                >
-                    <label for="new_project_name">Work in progress</label>
+                <section class="dashboard_panel">
+                    <div class="dashboard_panel_heading">
+                        <h2 class="section_heading">{{ panel_icon("entries") }} Recent entries</h2>
 
-                    <input
-                        type="text"
-                        id="new_project_name"
-                        name="project_name"
-                        maxlength="200"
-                        placeholder="Your next book or project title"
-                        required
+                        <a
+                            href="{{ url_for('dashboard.history') }}"
+                            class="dashboard_history_link"
+                        >
+                            View all history &rarr;
+                        </a>
+
+                    </div>
+
+                    {% if entries %}
+                        <div class="history_table_wrapper dashboard_recent_table">
+                            <table class="history_table" aria-label="Recent writing entries">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Work Title</th>
+                                        <th scope="col">Words</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in entries[:5] %}
+                                        <tr>
+                                            <td>{{ entry.created_at.strftime("%b %d, %Y") }}</td>
+                                            <td>{{ goal.project_name }}</td>
+                                            <td>{{ "{:,}".format(entry.words_written) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="dashboard_empty">
+                            Your quest starts with your first entry.
+                            Log a writing session to see it here.
+                        </p>
+                    {% endif %}
+
+                </section>
+            </div>
+
+            <div class="dashboard_column">
+                <section class="dashboard_panel">
+                    <h2 class="section_heading">{{ panel_icon("book") }} Log your writing</h2>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('dashboard.log_words') }}"
+                        class="dashboard_form"
                     >
+                        <label for="entry_project_name">Work title</label>
+                        <input type="text" id="entry_project_name" value="{{ goal.project_name }}" readonly>
+                        <label for="words_written">Words written</label>
 
-                    <label for="new_target_words">
-                        New target word count
-                    </label>
+                        <input
+                            type="number"
+                            id="words_written"
+                            name="words_written"
+                            min="1"
+                            step="1"
+                            placeholder="1000"
+                            required
+                        >
 
-                    <input
-                        type="number"
-                        id="new_target_words"
-                        name="target_words"
-                        min="1"
-                        step="1"
-                        placeholder="50000"
-                        required
-                    >
+                        <label for="entry_date">Date</label>
+                        <input type="text" id="entry_date" value="Recorded automatically" readonly>
 
-                    <button type="submit">
-                        Archive Current Quest &amp; Start New
-                    </button>
-                </form>
-            </section>
+                        <button type="submit" class="add_entry_button">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M12 7v10M7 12h10"></path>
+                            </svg>
+                            Add entry
+                        </button>
+                    </form>
+                </section>
 
+                <aside class="dashboard_panel dashboard_quote" aria-label="Writing inspiration">
+                    <blockquote>
+                        <p>“A page a day<br>builds a different you.”</p>
+                        <cite>— Austin Kleon</cite>
+                    </blockquote>
+                    <svg class="quote_branch" viewBox="0 0 140 150" fill="none" aria-hidden="true" focusable="false">
+                        <path d="M12 140C55 117 91 81 120 12" stroke="currentColor" stroke-width="1.5"></path>
+                        <g fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1">
+                            <path d="M39 123Q18 101 24 84Q44 93 39 123ZM55 110Q77 114 93 98Q71 92 55 110ZM73 90Q53 72 59 55Q77 67 73 90ZM90 67Q115 71 127 51Q104 47 90 67ZM105 42Q88 25 96 10Q111 21 105 42ZM115 27Q137 26 137 8Q122 11 115 27Z"></path>
+                        </g>
+                    </svg>
+                </aside>
+            </div>
         </div>
+
+                <details class="dashboard_panel dashboard_new_quest">
+                    <summary>Start a New Quest</summary>
+
+                    <p class="dashboard_muted">
+                        Archive your current quest and start at zero words.
+                        All previous entries will remain in your history.
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('dashboard.new_goal') }}"
+                        class="dashboard_form"
+                    >
+                        <label for="new_project_name">Work in progress</label>
+
+                        <input
+                            type="text"
+                            id="new_project_name"
+                            name="project_name"
+                            maxlength="200"
+                            placeholder="Your next book or project title"
+                            required
+                        >
+
+                        <label for="new_target_words">
+                            New target word count
+                        </label>
+
+                        <input
+                            type="number"
+                            id="new_target_words"
+                            name="target_words"
+                            min="1"
+                            step="1"
+                            placeholder="50000"
+                            required
+                        >
+
+                        <button type="submit">
+                            Archive Current Quest &amp; Start New
+                        </button>
+                    </form>
+                </details>
 
     {% else %}
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from flask import (
     Blueprint,
@@ -101,6 +101,35 @@ def dashboard():
 
     total_words = sum(entry.words_written for entry in entries)
 
+    today = datetime.now(timezone.utc).date()
+    week_start = today - timedelta(days=today.weekday())
+
+    weekly_totals = {
+        week_start + timedelta(days=offset): 0
+        for offset in range(7)
+    }
+
+    for entry in entries:
+        entry_date = entry.created_at.date()
+
+        if entry_date in weekly_totals:
+            weekly_totals[entry_date] += entry.words_written
+
+    writing_dates = {
+        entry.created_at.date()
+        for entry in entries
+    }
+
+    writing_streak = 0
+    streak_day = today
+
+    if streak_day not in writing_dates:
+        streak_day -= timedelta(days=1)
+
+    while streak_day in writing_dates:
+        writing_streak += 1
+        streak_day -= timedelta(days=1)
+
     progress_percent = (
         total_words / goal.target_words * 100
         if goal is not None
@@ -113,6 +142,8 @@ def dashboard():
         error=error,
         entries=entries,
         total_words=total_words,
+        weekly_totals=weekly_totals,
+        writing_streak=writing_streak,
         progress_percent=progress_percent,
         progress_bar_percent=min(progress_percent, 100),
         celebrate_goal=session.pop("celebrate_goal", False),

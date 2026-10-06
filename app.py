@@ -119,39 +119,6 @@ def register():
         error=error,
     )
 
-
-# log words
-@app.route("/draft-quest/log-words", methods=["POST"])
-def log_words():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    user = db.session.get(User, session["user_id"])
-
-    if user is None:
-        session.clear()
-        return redirect(url_for("login"))
-
-    words_input = request.form["words_written"].strip()
-
-    try:
-        words_written = int(words_input)
-    except ValueError:
-        return redirect(url_for("dashboard"))
-
-    if words_written <= 0:
-        return redirect(url_for("dashboard"))
-
-    entry = WordEntry(
-        user_id=user.id,
-        words_written=words_written,
-    )
-
-    db.session.add(entry)
-    db.session.commit()
-
-    return redirect(url_for("dashboard"))
-
 # Profile
 @app.route("/draft-quest/profile")
 def profile():
