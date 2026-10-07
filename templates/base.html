@@ -28,7 +28,6 @@
         <div class="site_nav_links">
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('books') }}">Books</a>
-            <a href="{{ url_for('connect') }}">Connect</a>
 
             {% if session.get("user_id") %}
                 <a href="{{ url_for('dashboard.dashboard') }}">
@@ -60,7 +59,7 @@
 
             <div class="account_dropdown">
                 {% if session.get("user_id") %}
-                    <a href="{{ url_for('profile') }}">My Profile</a>
+                    <a href="{{ url_for('profile.profile') }}">My Profile</a>
 
                     <form
                         method="POST"
@@ -78,6 +77,31 @@
     </nav>
 
     {% block content %}{% endblock %}
+
+    {% if request.endpoint not in ('profile.profile', 'profile.change_password') %}
+    <footer class="site_footer">
+        <div class="footer_content">
+            <div class="footer_intro">
+                <h2>Connect with Elizabeth Cassidy</h2>
+                <p>Book updates, news, and upcoming projects.</p>
+            </div>
+
+            <div class="footer_links">
+                <a href="mailto:elizabethcassidy.fantasy@gmail.com">
+                    elizabethcassidy.fantasy@gmail.com
+                </a>
+                <div class="footer_socials" aria-label="Social links">
+                    <a href="https://www.instagram.com/elizabethcassidy_fantasy/">
+                        Instagram
+                    </a>
+                    <a href="https://www.tiktok.com/@elizabethcassidy_fantasy">
+                        TikTok
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endif %}
 
     {% block extra_js %}{% endblock %}
 

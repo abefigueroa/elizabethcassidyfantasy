@@ -11,6 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     display_name = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    profile_image = db.Column(db.String(255), nullable=True)
 
     writing_goals = db.relationship(
         "WritingGoal",

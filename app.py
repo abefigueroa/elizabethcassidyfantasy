@@ -1,13 +1,14 @@
 import os
-import string
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
+from pathlib import Path
 
 from models import User, WordEntry, WritingGoal, db
 from routes.dashboard import dashboard_bp
-from email_validator import EmailNotValidError, validate_email
+from validators import is_valid_password, normalize_email
+from routes.profile import profile_bp
 
 
 load_dotenv()
@@ -16,31 +17,14 @@ app = Flask(__name__)
 
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///draft_quest.db"
+app.config["PROFILE_IMAGE_FOLDER"] = (
+    Path(app.root_path) / "static" / "uploads" / "profiles"
+)
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
 
 db.init_app(app)
 app.register_blueprint(dashboard_bp)
-
-def normalize_email(value):
-    try:
-        result = validate_email(
-            value.strip(),
-            check_deliverability=False, 
-        )
-    except EmailNotValidError:
-        return None
-
-    if len(result.normalized) > 255:
-        return None
-
-    return result.normalized.lower()
-
-def is_valid_password(password):
-    return (
-        len(password) >= 8
-        and any(character.isupper() for character in password)
-        and any(character in string.digits for character in password)
-        and any(character in string.punctuation for character in password)
-    )
+app.register_blueprint(profile_bp)
 
 @app.route("/")
 def home():
@@ -50,11 +34,6 @@ def home():
 @app.route("/books")
 def books():
     return render_template("books.html")
-
-
-@app.route("/connect")
-def connect():
-    return render_template("connect.html")
 
 
 @app.route("/draft-quest")
@@ -151,99 +130,6 @@ def register():
         "draft-quest/register.html",
         error=error,
     )
-
-# Profile
-@app.route("/draft-quest/profile", methods=["GET", "POST"])
-def profile():
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id) if user_id is not None else None
-
-    if user is None:
-        session.clear()
-        return redirect(url_for("login"))
-
-    error = None
-
-    if request.method == "POST":
-        display_name = request.form.get("display_name", "").strip()
-        email = normalize_email(request.form.get("email", ""))
-
-        if not display_name or len(display_name) > 50:
-            error = "Username must be between 1 and 50 characters."
-        elif email is None:
-            error = "Please enter a valid email address."
-        else:
-            existing_name = db.session.execute(
-                db.select(User).where(
-                    User.display_name == display_name,
-                    User.id != user.id,
-                )
-            ).scalar_one_or_none()
-
-            existing_email = db.session.execute(
-                db.select(User).where(
-                    User.email == email,
-                    User.id != user.id,
-                )
-            ).scalar_one_or_none()
-
-            if existing_name:
-                error = "That username is already taken."
-            elif existing_email:
-                error = "An account with that email already exists."
-            else:
-                user.display_name = display_name
-                user.email = email
-                db.session.commit()
-                return redirect(url_for("profile"))
-
-    return render_template(
-        "draft-quest/profile.html",
-        user=user,
-        error=error,
-    )
-
-@app.route("/draft-quest/change-password", methods=["POST"])
-def change_password():
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id) if user_id is not None else None
-
-    if user is None:
-        session.clear()
-        return redirect(url_for("login"))
-
-    current_password = request.form.get("current_password", "")
-    new_password = request.form.get("new_password", "")
-    confirm_password = request.form.get("confirm_password", "")
-
-    password_error = None
-
-    if not check_password_hash(user.password_hash, current_password):
-        password_error = "Your current password is incorrect."
-    elif not is_valid_password(new_password):
-        password_error = (
-            "New password must contain at least 8 characters, "
-            "an uppercase letter, a number, and a special character."
-        )
-    elif new_password != confirm_password:
-        password_error = "The new passwords do not match."
-    elif new_password == current_password:
-        password_error = "Choose a password different from your current one."
-
-    if password_error:
-        return render_template(
-            "draft-quest/profile.html",
-            user=user,
-            password_error=password_error,
-        )
-
-    user.password_hash = generate_password_hash(new_password)
-    db.session.commit()
-
-    session.clear()
-    session["user_id"] = user.id
-
-    return redirect(url_for("profile"))
 
 # Logout
 @app.route("/draft-quest/logout", methods=["POST"])
