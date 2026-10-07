@@ -10,22 +10,103 @@
 {% endblock %}
 
 {% block content %}
-<main class="quest_dashboard">
+<main class="quest_dashboard profile_page">
     <header class="dashboard_header">
         <p class="dashboard_eyebrow">Draft Quest</p>
         <h1>My Profile</h1>
     </header>
 
+    <div class="profile_layout">
+        <aside class="profile_summary" aria-label="Profile summary">
+            <div class="profile_avatar" aria-hidden="true">
+                {{ user.display_name[:1] | upper }}
+            </div>
+            <h2>{{ user.display_name }}</h2>
+            <p>{{ user.email }}</p>
+        </aside>
+
+        <div class="profile_settings">
+
     <section class="dashboard_panel dashboard_setup">
         <h2>Account Details</h2>
 
-        <dl class="profile_details">
-            <dt>Display name</dt>
-            <dd>{{ user.display_name }}</dd>
+        {% if error %}
+            <p class="form_error">{{ error }}</p>
+        {% endif %}
 
-            <dt>Email</dt>
-            <dd>{{ user.email }}</dd>
-        </dl>
+        <form method="POST" class="dashboard_form">
+            <label for="display_name">Username</label>
+            <input
+                type="text"
+                id="display_name"
+                name="display_name"
+                value="{{ user.display_name }}"
+                maxlength="50"
+                required
+            >
+
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ user.email }}"
+                maxlength="255"
+                required
+            >
+
+            <button type="submit">Save account details</button>
+        </form>
     </section>
+    <section class="dashboard_panel dashboard_setup">
+        <h2>Change Password</h2>
+
+        {% if password_error %}
+            <p class="form_error">{{ password_error }}</p>
+        {% endif %}
+
+        <form
+            method="POST"
+            action="{{ url_for('change_password') }}"
+            class="dashboard_form"
+        >
+            <label for="current_password">Current password</label>
+            <input
+                type="password"
+                id="current_password"
+                name="current_password"
+                autocomplete="current-password"
+                required
+            >
+
+            <label for="new_password">New password</label>
+            <small id="profile_password_help" class="password_help">
+                At least 8 characters, including an uppercase letter,
+                a number, and a special character.
+            </small>
+            <input
+                type="password"
+                id="new_password"
+                minlength="8"
+                aria-describedby="profile_password_help"
+                name="new_password"
+                autocomplete="new-password"
+                required
+            >
+
+            <label for="confirm_password">Confirm new password</label>
+            <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                autocomplete="new-password"
+                required
+            >
+
+            <button type="submit">Change password</button>
+        </form>
+    </section>
+        </div>
+    </div>
 </main>
 {% endblock %}

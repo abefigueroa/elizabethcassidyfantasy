@@ -11,45 +11,50 @@ Login | Draft Quest
 
 {% block content %}
 
-<main class="draft_quest_home">
+<main class="quest_dashboard registration_page">
+    <section class="dashboard_panel registration_card" aria-labelledby="login_heading">
+        <header class="dashboard_header">
+            <p class="dashboard_eyebrow">Draft Quest</p>
+            <h1 id="login_heading">Welcome back</h1>
+            <p>Log in to continue your writing quest.</p>
+        </header>
 
-    <h1>Login to Draft Quest</h1>
+        {% if error %}
+            <p class="dashboard_error" role="alert">{{ error }}</p>
+        {% endif %}
 
-    <div class="title_divider"></div>
+        <form method="POST" class="dashboard_form">
 
-    {% if error %}
-        <p class="form_error">{{ error }}</p>
-    {% endif %}
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="username"
+                value="{{ request.form.get('email', '') }}"
+                required
+            >
 
-    <form method="POST" class="auth_form">
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="current-password"
+                required
+            >
 
-        <label for="email">Email</label>
-        <input
-            type="email"
-            id="email"
-            name="email"
-            required
-        >
+            <button type="submit">
+                Log in
+            </button>
 
-        <label for="password">Password</label>
-        <input
-            type="password"
-            id="password"
-            name="password"
-            required
-        >
+        </form>
 
-        <button type="submit">
-            Login
-        </button>
-
-    </form>
-
-    <p>
-        Don't have an account?
-        <a href="{{ url_for('register') }}">Register</a>
-    </p>
-
+        <p class="registration_login">
+            Don't have an account?
+            <a href="{{ url_for('register') }}">Create an account</a>
+        </p>
+    </section>
 </main>
 
 {% endblock %}

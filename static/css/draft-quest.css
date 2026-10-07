@@ -380,6 +380,10 @@
     max-width: 550px;
 }
 
+.quest_onboarding {
+    margin-inline: auto;
+}
+
 .quest_dashboard #goal_celebration {
     margin-bottom: 24px;
     padding: 16px 20px;
@@ -407,44 +411,6 @@
 
 .dashboard_new_quest {
     margin-top: 24px;
-}
-
-.dashboard_quote {
-    position: relative;
-    min-height: 220px;
-    overflow: hidden;
-}
-
-.dashboard_quote blockquote {
-    position: relative;
-    z-index: 1;
-    margin: 4px 0;
-    padding: 0 0 0 20px;
-    border-left: 3px solid var(--quest_gold);
-}
-
-.quest_dashboard .dashboard_quote p {
-    font-size: clamp(1.4rem, 2.2vw, 2rem);
-    font-style: italic;
-    line-height: 1.5;
-}
-
-.dashboard_quote cite {
-    display: block;
-    margin-top: 18px;
-    font-size: 0.7rem;
-    font-style: normal;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-}
-
-.quote_branch {
-    position: absolute;
-    right: 8px;
-    bottom: 0;
-    width: 120px;
-    color: var(--quest_muted);
-    opacity: 0.65;
 }
 
 .dashboard_recent_table {
@@ -642,6 +608,69 @@
     border-radius: 0;
 }
 
+.quest_dashboard.profile_page {
+    max-width: 1100px;
+}
+
+.profile_layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+}
+
+.profile_summary {
+    padding: 32px 24px;
+    text-align: center;
+    background-color: #fffdf8;
+    border: 1px solid var(--quest_border);
+    border-radius: 16px;
+}
+
+.profile_avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background-color: #f6efe2;
+    color: var(--quest_gold);
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.profile_summary h2 {
+    margin: 0 0 8px;
+    overflow-wrap: anywhere;
+}
+
+.profile_page .profile_summary p {
+    color: var(--quest_muted);
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.profile_settings {
+    display: grid;
+    gap: 24px;
+    min-width: 0;
+}
+
+.profile_settings .dashboard_setup {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+}
+
+@media (max-width: 760px) {
+    .profile_layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+    }
+}
+
 @keyframes confetti_fall {
     from {
         transform: translate3d(0, 0, 0) rotate(0deg);
@@ -694,4 +723,42 @@
     .dashboard_form button {
         transition: none;
     }
+}
+
+/* Registration */
+.quest_dashboard.registration_page {
+    max-width: 520px;
+}
+
+.registration_card {
+    padding: clamp(24px, 5vw, 40px);
+    border-radius: 20px;
+}
+
+.registration_card .dashboard_header h1 {
+    font-size: clamp(1.8rem, 5vw, 2.3rem);
+}
+
+.registration_card .dashboard_header > p:last-child {
+    font-size: 1rem;
+}
+
+.password_help {
+    color: var(--quest_muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.registration_page .registration_login {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--quest_border);
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.registration_login a {
+    color: var(--quest_gold);
+    font-weight: bold;
+    text-underline-offset: 3px;
 }

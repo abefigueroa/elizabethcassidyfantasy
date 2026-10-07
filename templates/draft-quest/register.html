@@ -11,48 +11,63 @@ Register | Draft Quest
 
 {% block content %}
 
-<main class="draft_quest_home">
+<main class="quest_dashboard registration_page">
+    <section class="dashboard_panel registration_card" aria-labelledby="register_heading">
+        <header class="dashboard_header">
+            <p class="dashboard_eyebrow">Draft Quest</p>
+            <h1 id="register_heading">Create your account</h1>
+            <p>Make room for your next chapter. Track your words and build a writing habit.</p>
+        </header>
 
-    <h1>Join Draft Quest</h1>
+        {% if error %}
+            <p class="dashboard_error" role="alert">{{ error }}</p>
+        {% endif %}
 
-    <div class="title_divider"></div>
+        <form method="POST" class="dashboard_form">
+            <label for="display_name">Username</label>
+            <input
+                type="text"
+                id="display_name"
+                name="display_name"
+                autocomplete="username"
+                maxlength="50"
+                value="{{ request.form.get('display_name', '') }}"
+                required
+            >
 
-    {% if error %}
-        <p class="form_error">{{ error }}</p>
-    {% endif %}
+            <label for="email">Email address</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                maxlength="255"
+                value="{{ request.form.get('email', '') }}"
+                required
+            >
 
-    <form method="POST" class="auth_form">
+            <label for="password">Password</label>
+            <small id="register_password_help" class="password_help">
+                At least 8 characters, including an uppercase letter,
+                a number, and a special character.
+            </small>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                minlength="8"
+                aria-describedby="register_password_help"
+                required
+            >
 
-        <label for="email">Email</label>
-        <input
-            type="email"
-            id="email"
-            name="email"
-            required
-        >
+            <button type="submit">Create account</button>
+        </form>
 
-        <label for="display_name">Display Name</label>
-        <input
-            type="text"
-            id="display_name"
-            name="display_name"
-            required
-        >
-
-        <label for="password">Password</label>
-        <input
-            type="password"
-            id="password"
-            name="password"
-            required
-        >
-
-        <button type="submit">
-            Create Account
-        </button>
-
-    </form>
-
+        <p class="registration_login">
+            Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+        </p>
+    </section>
 </main>
 
 {% endblock %}

@@ -34,14 +34,14 @@ Dashboard | Draft Quest
 
 <main class="quest_dashboard">
 
+    {% if user.writing_goal %}
     <header class="dashboard_header">
         <p class="dashboard_eyebrow">Draft Quest</p>
 
         <h1>{{ user.display_name }}'s Dashboard</h1>
 
-        <p>Every word brings your story closer.</p>
-
     </header>
+    {% endif %}
 
     {% for category, message in get_flashed_messages(with_categories=true) %}
         <p
@@ -393,18 +393,6 @@ Dashboard | Draft Quest
                     </form>
                 </section>
 
-                <aside class="dashboard_panel dashboard_quote" aria-label="Writing inspiration">
-                    <blockquote>
-                        <p>“A page a day<br>builds a different you.”</p>
-                        <cite>— Austin Kleon</cite>
-                    </blockquote>
-                    <svg class="quote_branch" viewBox="0 0 140 150" fill="none" aria-hidden="true" focusable="false">
-                        <path d="M12 140C55 117 91 81 120 12" stroke="currentColor" stroke-width="1.5"></path>
-                        <g fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1">
-                            <path d="M39 123Q18 101 24 84Q44 93 39 123ZM55 110Q77 114 93 98Q71 92 55 110ZM73 90Q53 72 59 55Q77 67 73 90ZM90 67Q115 71 127 51Q104 47 90 67ZM105 42Q88 25 96 10Q111 21 105 42ZM115 27Q137 26 137 8Q122 11 115 27Z"></path>
-                        </g>
-                    </svg>
-                </aside>
             </div>
         </div>
 
@@ -454,7 +442,7 @@ Dashboard | Draft Quest
 
     {% else %}
 
-        <section class="dashboard_panel dashboard_setup">
+        <section class="dashboard_panel dashboard_setup quest_onboarding">
             <h2>Begin Your Writing Quest</h2>
 
             <p class="dashboard_muted">
