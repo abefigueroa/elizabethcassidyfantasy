@@ -87,16 +87,66 @@ def profile():
             elif existing_email:
                 error = "An account with that email already exists."
             else:
-                user.display_name = display_name
-                user.email = email
-                db.session.commit()
-                return redirect(url_for("profile.profile"))
+                upload = request.files.get("profile_image")
+
+                if upload is not None and upload.filename:
+                    try:
+                        user.profile_image = save_profile_image(upload)
+                    except ValueError as exc:
+                        error = str(exc)
+                if error is None:
+                    user.display_name = display_name
+                    user.email = email
+                    db.session.commit()        
+                    return redirect(url_for("profile.profile"))
 
     return render_template(
         "draft-quest/profile.html",
         user=user,
         error=error,
     )
+
+@profile_bp.route("/profile-image", methods=["POST"])
+def profile_image():
+    user_id = session.get("user_id")
+    user = db.session.get(User, user_id) if user_id is not None else None
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    upload = request.files.get("profile_image")
+
+    if upload is None or upload.filename == "":
+        return redirect(url_for("profile.profile"))
+    elif upload is not None and upload.filename:
+        previous_image = user.profile_image
+
+        try:
+            user.profile_image = save_profile_image(upload)
+        except ValueError as exc:
+            error = str(exc)
+
+            return render_template(
+                "draft-quest/profile.html",
+                user=user,
+                error=error,
+            )
+
+        db.session.commit()
+
+        if previous_image:
+            previous_path = (
+                current_app.config["PROFILE_IMAGE_FOLDER"] / previous_image
+            )
+            try:
+                previous_path.unlink(missing_ok=True)
+            except OSError:
+                current_app.logger.warning(
+                    "Could not delete the previous profile image.",
+                    exc_info=True,
+                )
+        return redirect(url_for("profile.profile"))
 
 @profile_bp.route("/change-password", methods=["POST"])
 def change_password():

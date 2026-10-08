@@ -18,9 +18,32 @@
 
     <div class="profile_layout">
         <aside class="profile_summary" aria-label="Profile summary">
-            <div class="profile_avatar" aria-hidden="true">
-                {{ user.display_name[:1] | upper }}
-            </div>
+            <form
+                method="POST"
+                action="{{ url_for('profile.profile_image') }}"
+                enctype="multipart/form-data"
+                class="profile_avatar_picker"
+            >
+                <label for="profile_image" class="profile_avatar">
+                    {% if user.profile_image %}
+                        <img
+                            src="{{ url_for('static', filename='uploads/profiles/' ~ user.profile_image) }}"
+                            alt=""
+                        >
+                    {% else %}
+                        <span aria-hidden="true">{{ user.display_name[:1] | upper }}</span>
+                    {% endif %}
+                    <span class="profile_avatar_action">Choose image</span>
+                </label>
+                <input
+                    type="file"
+                    id="profile_image"
+                    name="profile_image"
+                    accept="image/jpeg,image/png,image/webp"
+                    aria-label="Choose profile image"
+                    onchange="if (this.files.length) this.form.requestSubmit();"
+                >
+            </form>
             <h2>{{ user.display_name }}</h2>
             <p>{{ user.email }}</p>
         </aside>
@@ -34,7 +57,7 @@
             <p class="form_error">{{ error }}</p>
         {% endif %}
 
-        <form method="POST" class="dashboard_form">
+        <form id="account_details_form" method="POST" class="dashboard_form" enctype="multipart/form-data">
             <label for="display_name">Username</label>
             <input
                 type="text"

@@ -131,6 +131,17 @@ def register():
         error=error,
     )
 
+@app.context_processor
+def inject_current_user():
+    user_id = session.get("user_id")
+    current_user = (
+        db.session.get(User, user_id)
+        if user_id is not None
+        else None
+    )
+
+    return {"current_user": current_user}
+
 # Logout
 @app.route("/draft-quest/logout", methods=["POST"])
 def logout():
