@@ -15,11 +15,13 @@ Books | Elizabeth Cassidy
 
 <article class="book_info">
     <div class="book_cover_spotlight">
+    <button class="book_cover_toggle" type="button" aria-label="Toggle book cover tilt" aria-pressed="false">
     <img
         class="book_cover"
         src="{{ url_for('static', filename='images/ignivarbookcover.jpg') }}"
         alt="Ignivar: The Fall of Pyraxia book cover"
     >
+    </button>
     </div>
 
     <div class="book_details">
@@ -55,4 +57,8 @@ Books | Elizabeth Cassidy
 </article>
 
 </main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/books.js') }}" defer></script>
 {% endblock %}
