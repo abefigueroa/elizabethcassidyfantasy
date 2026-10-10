@@ -16,9 +16,14 @@ load_dotenv()
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///draft_quest.db"
-app.config["PROFILE_IMAGE_FOLDER"] = (
-    Path(app.root_path) / "static" / "uploads" / "profiles"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL",
+    "sqlite:///draft_quest.db"
+)
+app.config["PROFILE_IMAGE_FOLDER"] = Path(
+    os.environ.get(
+        "PROFILE_IMAGE_FOLDER", 
+        Path(app.root_path) / "static" / "uploads" / "profiles"
+    )
 )
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
 
@@ -149,6 +154,9 @@ def logout():
 
     return redirect(url_for("draft_quest"))
 
+@app.cli.command("init-db")
+def init_db():
+    db.create_all()
 
 def main() -> None:
     with app.app_context():

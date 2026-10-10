@@ -27,7 +27,7 @@
                 <label for="profile_image" class="profile_avatar">
                     {% if user.profile_image %}
                         <img
-                            src="{{ url_for('static', filename='uploads/profiles/' ~ user.profile_image) }}"
+                            src="{{ url_for('profile.serve_profile_image', filename=user.profile_image) }}"
                             alt=""
                         >
                     {% else %}

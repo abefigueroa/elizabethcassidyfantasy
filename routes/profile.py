@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from flask import (
     Blueprint, current_app, redirect, render_template,
-    request, session, url_for, flash
+    request, session, url_for, flash, send_from_directory
 )
 from PIL import Image, ImageOps, UnidentifiedImageError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -16,6 +16,13 @@ profile_bp = Blueprint(
     __name__,
     url_prefix="/draft-quest",
 )
+
+@profile_bp.route("/profile-images/<filename>")
+def serve_profile_image(filename):
+    return send_from_directory(
+        current_app.config["PROFILE_IMAGE_FOLDER"],
+        filename,
+    )
 
 def save_profile_image(upload):
     try:

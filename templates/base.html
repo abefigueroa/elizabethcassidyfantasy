@@ -44,7 +44,7 @@
             <summary aria-label="Account menu">
                 {% if current_user and current_user.profile_image %}
                     <img
-                        src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_image) }}"
+                        src="{{ url_for('profile.serve_profile_image', filename=current_user.profile_image) }}"
                         alt=""
                         width="28"
                         height="28"
