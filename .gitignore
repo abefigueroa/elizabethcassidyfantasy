@@ -3,5 +3,5 @@ __pycache__/
 *.pyc
 instance/
 .env
-agents.md
+AGENTS.md
 static/uploads/

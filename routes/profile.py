@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from flask import (
     Blueprint, current_app, redirect, render_template,
-    request, session, url_for,
+    request, session, url_for, flash
 )
 from PIL import Image, ImageOps, UnidentifiedImageError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -176,11 +176,8 @@ def change_password():
         password_error = "Choose a password different from your current one."
 
     if password_error:
-        return render_template(
-            "draft-quest/profile.html",
-            user=user,
-            password_error=password_error,
-        )
+        flash(password_error, "password_error")
+        return redirect(url_for("profile.profile"))
 
     user.password_hash = generate_password_hash(new_password)
     db.session.commit()
@@ -189,3 +186,38 @@ def change_password():
     session["user_id"] = user.id
 
     return redirect(url_for("profile.profile"))
+
+@profile_bp.route("/delete-account", methods=["POST"])
+def delete_account():
+    user_id = session.get("user_id")
+    user = db.session.get(User, user_id) if user_id is not None else None
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    current_password = request.form.get("current_password", "")
+    if not check_password_hash(user.password_hash, current_password):
+        flash("Your current password is incorrect", "delete_error")
+        return redirect(url_for("profile.profile"))
+
+    previous_image = user.profile_image
+
+    db.session.delete(user)
+    db.session.commit()
+
+    session.clear()
+
+    if previous_image:
+        previous_path = (
+            current_app.config["PROFILE_IMAGE_FOLDER"] / previous_image
+        )
+        try:
+            previous_path.unlink(missing_ok=True)
+        except OSError:
+            current_app.logger.warning(
+                "Could not delete the account profile image.",
+                exc_info=True,
+            )
+    
+    return redirect(url_for("login"))

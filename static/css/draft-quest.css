@@ -804,3 +804,11 @@
     font-weight: bold;
     text-underline-offset: 3px;
 }
+
+.profile_error {
+    color: #b91c1c;
+    background-color: #fef2f2;
+    border-left: 4px solid #b91c1c;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+}

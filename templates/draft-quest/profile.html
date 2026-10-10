@@ -84,9 +84,11 @@
     <section class="dashboard_panel dashboard_setup">
         <h2>Change Password</h2>
 
-        {% if password_error %}
-            <p class="form_error">{{ password_error }}</p>
-        {% endif %}
+        {% for message in get_flashed_messages(category_filter=["password_error"]) %}
+            <p class="form_error profile_error" role="alert">
+                {{ message }}
+            </p>
+        {% endfor %}
 
         <form
             method="POST"
@@ -127,6 +129,37 @@
             >
 
             <button type="submit">Change password</button>
+        </form>
+    </section>
+    <section class="dashboard_panel dashboard_setup">
+        <h2>Delete Account</h2>
+        <p>
+            Permanently delete your account, writing goals, word-count
+            entries, and profile image. This cannot be undone.
+        </p>
+
+        {% for message in get_flashed_messages(category_filter=["delete_error"]) %}
+            <p class="form_error profile_error" role="alert">
+                {{ message }}
+            </p>
+        {% endfor %}
+
+        <form
+            method="POST"
+            action="{{ url_for('profile.delete_account') }}"
+            class="dashboard_form"
+            onsubmit="return confirm('Permanently delete your account and all writing data? This cannot be undone.');"
+        >
+            <label for="delete_current_password">Current password</label>
+            <input
+                type="password"
+                id="delete_current_password"
+                name="current_password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit">Delete account permanently</button>
         </form>
     </section>
         </div>
