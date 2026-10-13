@@ -1,17 +1,24 @@
 import os
+import secrets
+import resend
 
+from resend.exceptions import ResendError
 from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from pathlib import Path
+from datetime import datetime, timezone, timedelta
 
-from models import User, WordEntry, WritingGoal, db
+from models import User, WordEntry, WritingGoal, db, PasswordReset
 from routes.dashboard import dashboard_bp
 from validators import is_valid_password, normalize_email
 from routes.profile import profile_bp
+from routes.password_reset import password_reset_bp
 
 
 load_dotenv()
+
+resend.api_key = os.environ["RESEND_API_KEY"]
 
 app = Flask(__name__)
 
@@ -30,6 +37,7 @@ app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
 db.init_app(app)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(profile_bp)
+app.register_blueprint(password_reset_bp)
 
 @app.route("/")
 def home():
@@ -52,6 +60,7 @@ def draft_quest():
     session.pop("user_id", None)
 
     return render_template("draft-quest/index.html")
+
 
 # Login
 @app.route("/draft-quest/login", methods=["GET", "POST"])
@@ -84,6 +93,7 @@ def login():
         "draft-quest/login.html",
         error=error,
     )
+
 
 # Registration
 @app.route("/draft-quest/register", methods=["GET", "POST"])
@@ -136,6 +146,7 @@ def register():
         error=error,
     )
 
+
 @app.context_processor
 def inject_current_user():
     user_id = session.get("user_id")
@@ -147,6 +158,7 @@ def inject_current_user():
 
     return {"current_user": current_user}
 
+
 # Logout
 @app.route("/draft-quest/logout", methods=["POST"])
 def logout():
@@ -154,9 +166,11 @@ def logout():
 
     return redirect(url_for("draft_quest"))
 
+
 @app.cli.command("init-db")
 def init_db():
     db.create_all()
+
 
 def main() -> None:
     with app.app_context():
