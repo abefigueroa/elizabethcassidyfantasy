@@ -6,6 +6,43 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class PasswordReset(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+    )
+
+    code_hash = db.Column(
+        db.String(255), 
+        nullable=False,
+    )
+
+    expires_at = db.Column(
+        db.DateTime,
+        nullable=False,
+    )
+
+    failed_attempts = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False,
+    )
+
+    used_at = db.Column(
+        db.DateTime, 
+        nullable=True,
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Reset Code | Draft Quest{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/draft-quest.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="quest_dashboard registration_page">
+    <section class="dashboard_panel registration_card"
+             aria-labelledby="verify_code_heading">
+        <header class="dashboard_header">
+            <p class="dashboard_eyebrow">Draft Quest</p>
+            <h1 id="verify_code_heading">Enter your reset code</h1>
+            <p>If an account exists for the email you provided,
+               we’ll send a six-digit code. Enter your latest code below.</p>
+        </header>
+
+        {% if error %}
+            <p class="dashboard_error" role="alert">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST" class="dashboard_form">
+            <label for="code">Reset code</label>
+            <input
+                type="text"
+                id="code"
+                name="code"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                pattern="[0-9]{6}"
+                minlength="6"
+                maxlength="6"
+                aria-describedby="code_help"
+                required
+            >
+            <p id="code_help">Use the latest code. It expires after 10 minutes.</p>
+
+            <button type="submit">Verify code</button>
+        </form>
+
+        <p class="registration_login">
+            <a href="{{ url_for('password_reset.forgot_password') }}">Request a new code</a>
+        </p>
+    </section>
+</main>
+{% endblock %}
