@@ -124,8 +124,53 @@ def verify_reset_code():
             for character in code
         ):
             error = "Please enter a six-digit reset code."
-    
+        else:
+            user = db.session.execute(
+                db.select(User).where(User.email == email)
+            ).scalar_one_or_none()
+
+            if user is None:
+                error = "Invalid or expired reset code."
+            else:
+                latest_reset = db.session.execute(
+                    db.select(PasswordReset)
+                    .where(PasswordReset.user_id == user.id)
+                    .order_by(PasswordReset.created_at.desc())
+                    .limit(1)
+                ).scalar_one_or_none()
+
+                if latest_reset is None:
+                    error = "Invalid or expired reset code."
+                elif latest_reset.used_at is not None:
+                    error = "Invalid or expired reset code."
+                elif latest_reset.expires_at.replace(
+                    tzinfo=timezone.utc
+                ) <= datetime.now(timezone.utc):
+                    error = "Invalid or expired reset code."
+                elif latest_reset.failed_attempts >= 5:
+                    error = "Invalid or expired reset code."
+                elif not check_password_hash(latest_reset.code_hash, code):
+                    latest_reset.failed_attempts += 1
+                    db.session.commit()
+                    error = "Invalid or expired reset code."
+                else:
+                    latest_reset.used_at = datetime.now(timezone.utc)
+                    db.session.commit()
+                    session["password_reset_id"] = latest_reset.id
+                    session.pop("password_reset_email", None)
+                    return redirect(url_for("password_reset.reset_password"))
+
     return render_template(
         "draft-quest/verify-reset-code.html",
         error=error,
     )
+
+
+@password_reset_bp.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+    reset_id = session.get("password_reset_id")
+
+    if reset_id is None:
+        return redirect(url_for("password_reset.forgot_password"))
+    
+    return "Reset password page"
