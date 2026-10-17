@@ -51,8 +51,11 @@ Login | Draft Quest
         </form>
 
         <p class="registration_login">
-            Don't have an account?
             <a href="{{ url_for('register') }}">Create an account</a>
+            <span aria-hidden="true"> &middot; </span>
+            <a href="{{ url_for('password_reset.forgot_password') }}">
+                Forgot password?
+            </a>
         </p>
     </section>
 </main>
