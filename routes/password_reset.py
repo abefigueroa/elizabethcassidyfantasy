@@ -173,4 +173,69 @@ def reset_password():
     if reset_id is None:
         return redirect(url_for("password_reset.forgot_password"))
     
-    return "Reset password page"
+    reset_request = db.session.get(PasswordReset, reset_id)
+    if reset_request is None:
+        session.pop("password_reset_id", None)
+        return redirect(url_for("password_reset.forgot_password"))
+    if reset_request.expires_at.replace(
+        tzinfo=timezone.utc
+    ) <= datetime.now(timezone.utc):
+        session.pop("password_reset_id", None)
+        return redirect(url_for("password_reset.forgot_password"))
+
+    if reset_request.used_at is None:
+        session.pop("password_reset_id", None)
+        return redirect(url_for("password_reset.forgot_password"))
+
+    user = db.session.get(User, reset_request.user_id)
+    if user is None:
+        session.pop("password_reset_id", None)
+        return redirect(url_for("password_reset.forgot_password"))
+
+    error = None
+
+    if request.method == "POST":
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+
+        if not is_valid_password(password):
+            error = (
+                "Password must contain at least 8 characters, "
+                "an uppercase letter, "
+                "a number, "
+                "and a special character."
+            )
+        elif password != confirm_password:
+            error = "Passwords do not match."
+        else:
+            user.password_hash = generate_password_hash(password)
+            user.session_version += 1
+            reset_requests = db.session.execute(
+                db.select(PasswordReset).where(PasswordReset.user_id == user.id)
+            ).scalars().all()
+            for old_reset in reset_requests:
+                db.session.delete(old_reset)
+            db.session.commit()
+            session.pop("password_reset_id", None)
+            email_body = (
+                "Your Draft Quest password has been changed successfully.\n\n"
+                "If you made this change, no further action is needed.\n\n"
+                "If you didn't change your password, "
+                "please contact Draft Quest support immediately.\n\n"
+                "-The Draft Quest Team"
+            )
+            sender = "Draft Quest <noreply@mail.elizabethcassidyfantasy.com>"
+            email_params = {
+                "from": sender,
+                "to": [user.email],
+                "subject": "Your Draft Quest password was changed",
+                "text": email_body,
+            }
+            try:
+                resend.Emails.send(email_params)
+            except ResendError:
+                current_app.logger.error("Password change notification email delivery failed.")
+
+            return redirect(url_for("login"))
+    
+    return render_template("draft-quest/reset-password.html", error=error)

@@ -43,11 +43,17 @@ class PasswordReset(db.Model):
     )
 
 
+class PasswordResetThrottle(db.Model):
+    email = db.Column(db.String(255), primary_key=True)
+    window_started_at = db.Column(db.DateTime, nullable=False)
+    
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     display_name = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    session_version = db.Column(db.Integer, default=0, nullable=False)
     profile_image = db.Column(db.String(255), nullable=True)
 
     writing_goals = db.relationship(

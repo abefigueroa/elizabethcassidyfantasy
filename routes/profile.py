@@ -7,7 +7,7 @@ from flask import (
 from PIL import Image, ImageOps, UnidentifiedImageError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from models import User, db
+from models import User, db, PasswordReset
 from validators import is_valid_password, normalize_email
 
 
@@ -187,10 +187,17 @@ def change_password():
         return redirect(url_for("profile.profile"))
 
     user.password_hash = generate_password_hash(new_password)
+    user.session_version += 1
+    reset_requests = db.session.execute(
+        db.select(PasswordReset).where(PasswordReset.user_id == user.id)
+    ).scalars().all()
+    for old_reset in reset_requests:
+        db.session.delete(old_reset)
     db.session.commit()
 
     session.clear()
     session["user_id"] = user.id
+    session["session_version"] = user.session_version
 
     return redirect(url_for("profile.profile"))
 

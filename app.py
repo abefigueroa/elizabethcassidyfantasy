@@ -86,6 +86,7 @@ def login():
             else:
                 session.clear()
                 session["user_id"] = user.id
+                session["session_version"] = user.session_version
 
                 return redirect(url_for("dashboard.dashboard"))
 
@@ -138,6 +139,7 @@ def register():
 
             session.clear()
             session["user_id"] = user.id
+            session["session_version"] = user.session_version
 
             return redirect(url_for("dashboard.dashboard"))
 
@@ -146,6 +148,20 @@ def register():
         error=error,
     )
 
+
+@app.before_request
+def validate_login_session():
+    user_id = session.get("user_id")
+    if user_id is None:
+        return
+    user = db.session.get(User, user_id)
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+    if session.get("session_version") != user.session_version:
+        session.clear()
+        return redirect(url_for("login"))
+    
 
 @app.context_processor
 def inject_current_user():
