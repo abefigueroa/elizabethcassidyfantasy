@@ -282,12 +282,32 @@ Dashboard | Draft Quest
 
                 </section>
 
-                <section class="dashboard_panel">
-                    <h2 class="section_heading">{{ panel_icon("chart") }} Words this week</h2>
+                <section class="dashboard_panel" id="weekly-words">
+                    <div class="dashboard_panel_heading">
+                        <h2 class="section_heading">{{ panel_icon("chart") }} Words this week</h2>
+                        <a href="{{ url_for('dashboard.history') }}" class="dashboard_history_link">
+                            View all history &rarr;
+                        </a>
+                    </div>
+
+                    {% set week_end = weekly_totals.keys() | list | last %}
+                    <nav class="week_navigation" aria-label="Choose writing week">
+                        <a href="{{ url_for('dashboard.dashboard', week=week_offset - 1, _anchor='weekly-words') }}" aria-label="Previous week">&larr;</a>
+                        <span>
+                            {{ week_start.strftime("%b %d, %Y") }}
+                            &ndash;
+                            {{ week_end.strftime("%b %d, %Y") }}
+                        </span>
+                        {% if week_offset < 0 %}
+                            <a href="{{ url_for('dashboard.dashboard', week=week_offset + 1, _anchor='weekly-words') }}" aria-label="Next week">&rarr;</a>
+                        {% else %}
+                            <span class="week_navigation_disabled" aria-label="You are viewing the current week">&rarr;</span>
+                        {% endif %}
+                    </nav>
                     {% set weekly_max = [weekly_totals.values() | max, 1] | max %}
                     {% set chart_step = ((weekly_max / 400) | round(0, 'ceil') | int) * 100 %}
                     {% set chart_max = chart_step * 4 %}
-                    <div class="weekly_graph" role="group" aria-label="Words written this week for the current project, Monday through Sunday, UTC">
+                    <div class="weekly_graph" role="group" aria-label="Words written for the selected week for the current project, Monday through Sunday, UTC">
                         <div class="weekly_axis" aria-hidden="true">
                             {% for tick in range(4, -1, -1) %}
                                 <span>{{ "{:,}".format(chart_step * tick) }}</span>
@@ -306,48 +326,6 @@ Dashboard | Draft Quest
                     </div>
                 </section>
 
-                <section class="dashboard_panel">
-                    <div class="dashboard_panel_heading">
-                        <h2 class="section_heading">{{ panel_icon("entries") }} Recent entries</h2>
-
-                        <a
-                            href="{{ url_for('dashboard.history') }}"
-                            class="dashboard_history_link"
-                        >
-                            View all history &rarr;
-                        </a>
-
-                    </div>
-
-                    {% if entries %}
-                        <div class="history_table_wrapper dashboard_recent_table">
-                            <table class="history_table" aria-label="Recent writing entries">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Work Title</th>
-                                        <th scope="col">Words</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for entry in entries[:5] %}
-                                        <tr>
-                                            <td>{{ entry.created_at.strftime("%b %d, %Y") }}</td>
-                                            <td>{{ goal.project_name }}</td>
-                                            <td>{{ "{:,}".format(entry.words_written) }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <p class="dashboard_empty">
-                            Your quest starts with your first entry.
-                            Log a writing session to see it here.
-                        </p>
-                    {% endif %}
-
-                </section>
             </div>
 
             <div class="dashboard_column">

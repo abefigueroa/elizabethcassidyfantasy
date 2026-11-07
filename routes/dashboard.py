@@ -102,7 +102,11 @@ def dashboard():
     total_words = sum(entry.words_written for entry in entries)
 
     today = datetime.now(timezone.utc).date()
-    week_start = today - timedelta(days=today.weekday())
+    week_offset = request.args.get("week", default=0, type=int)
+    week_start = (
+        today - timedelta(days=today.weekday())
+        + timedelta(weeks=week_offset)
+    )
 
     weekly_totals = {
         week_start + timedelta(days=offset): 0
@@ -143,6 +147,8 @@ def dashboard():
         entries=entries,
         total_words=total_words,
         today=today.isoformat(),
+        week_start=week_start,
+        week_offset=week_offset,
         weekly_totals=weekly_totals,
         writing_streak=writing_streak,
         progress_percent=progress_percent,

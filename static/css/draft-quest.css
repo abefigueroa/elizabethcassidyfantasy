@@ -325,7 +325,7 @@
     outline-offset: 3px;
 }
 
-/* Recent entries */
+/* Dashboard panel headings and week navigation */
 
 .dashboard_panel_heading {
     display: flex;
@@ -820,4 +820,50 @@
     border-left: 4px solid #b91c1c;
     padding: 0.75rem 1rem;
     font-weight: 600;
+}
+
+.week_navigation {
+    position: static;
+    width: auto;
+    height: auto;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.week_navigation a,
+.week_navigation_disabled {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.week_navigation a {
+    margin: 0;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--quest_gold);
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.week_navigation a:hover {
+    background: rgb(0 0 0 / 6%);
+}
+
+.week_navigation a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
+.week_navigation_disabled {
+    opacity: 0.35;
 }
