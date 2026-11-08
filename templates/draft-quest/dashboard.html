@@ -466,6 +466,10 @@ Dashboard | Draft Quest
 {% endblock %}
 
 {% block extra_js %}
+    <script
+        src="{{ url_for('static', filename='js/dashboard-weeks.js') }}"
+        defer
+    ></script>
     {% if celebrate_goal %}
         <script
             src="{{ url_for('static', filename='js/draft-quest.js') }}"
